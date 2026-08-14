@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>아빠의 총알피하기 - 무료 총알 피하기 게임</title>
+  <meta name="description" content="아빠의 총알피하기 - 큰 글씨와 넉넉한 버튼으로 아빠를 위한 무료 총알 피하기 게임. 떨어지는 총알을 피해 90초를 버티세요. 쉬움·보통·어려움 난이도, 최고 기록 자동 저장.">
+  <link rel="canonical" href="https://bulletdodgelee.github.io/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="아빠의 총알피하기 - 무료 총알 피하기 게임">
+  <meta property="og:description" content="아빠의 총알피하기 - 큰 글씨와 넉넉한 버튼으로 아빠를 위한 무료 총알 피하기 게임. 떨어지는 총알을 피해 90초를 버티세요.">
+  <meta property="og:url" content="https://bulletdodgelee.github.io/">
+  <meta property="og:site_name" content="아빠의 총알피하기">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:image" content="https://bulletdodgelee.github.io/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="아빠의 총알피하기 로고">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="아빠의 총알피하기 - 무료 총알 피하기 게임">
+  <meta name="twitter:description" content="아빠의 총알피하기 - 큰 글씨와 넉넉한 버튼으로 아빠를 위한 무료 총알 피하기 게임입니다.">
+  <meta name="twitter:image" content="https://bulletdodgelee.github.io/og-image.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "아빠의 총알피하기",
+    "url": "https://bulletdodgelee.github.io/",
+    "description": "아빠의 총알피하기 - 큰 글씨와 넉넉한 버튼으로 아빠를 위한 무료 총알 피하기 게임입니다.",
+    "inLanguage": "ko"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "아빠의 총알피하기",
+    "url": "https://bulletdodgelee.github.io/",
+    "description": "아빠의 총알피하기 - 큰 글씨와 넉넉한 버튼으로 아빠를 위한 무료 총알 피하기 게임입니다.",
+    "inLanguage": "ko",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "KRW"
+    },
+    "featureList": [
+      "큰 글씨와 넉넉한 버튼",
+      "쉬움·보통·어려움 난이도",
+      "키보드·마우스·터치 조작",
+      "최고 기록 자동 저장",
+      "90초 클리어 목표"
+    ]
+  }
+  </script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* ── Elderly-Friendly Color System ── */
+  --bg:#FFFFFF;
+  --surface:#FFFFFF;
+  --surface-raised:#F3F4F6;
+  --border:#374151;
+  --border-thin:#9CA3AF;
+  --border-thick:#1F2937;
+  --primary:#2563EB;
+  --primary-hover:#1D4ED8;
+  --primary-light:#DBEAFE;
+  --primary-ring:rgba(37,99,235,0.35);
+  --error:#DC2626;
+  --error-bg:#FEE2E2;
+  --error-ring:rgba(220,38,38,0.30);
+  --success:#059669;
+  --success-bg:#D1FAE5;
+  --warning:#D97706;
+  --warning-bg:#FEF3C7;
+  --text:#111827;
+  --text-secondary:#374151;
+  --text-muted:#6B7280;
+
+  /* 게임별 강조색 (아빠의 총알피하기) */
+  --accent-bulletdodge:#DB2777;
+  --accent-bulletdodge-bg:#FCE7F3;
+
+  /* ── Spacing Scale (8px base) ── */
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:20px;
+  --space-6:24px;
+  --space-8:32px;
+  --space-10:40px;
+
+  /* ── Typography ── */
+  --font-family:-apple-system,BlinkMacSystemFont,'Malgun Gothic','맑은 고딕',sans-serif;
+  --text-xs:13px;
+  --text-sm:15px;
+  --text-base:18px;
+  --text-lg:22px;
+  --text-xl:26px;
+  --text-2xl:30px;
+  --text-3xl:38px;
+  --weight-regular:400;
+  --weight-medium:500;
+  --weight-semibold:600;
+  --weight-bold:700;
+  --weight-extrabold:800;
+  --line-height:1.6;
+
+  /* ── Touch Targets (핵심!) ── */
+  --touch-min:56px;
+  --btn-radius:12px;
+  --radius:12px;
+  --radius-sm:8px;
+  --radius-lg:20px;
+
+  /* ── Shadows / Transitions ── */
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.10);
+  --shadow-md:0 2px 8px rgba(0,0,0,0.12);
+  --shadow-lg:0 4px 16px rgba(0,0,0,0.14);
+  --transition-fast:150ms ease;
+  --transition-base:200ms ease;
+}
+html{
+  touch-action:manipulation;
+  -webkit-touch-callout:none;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-text-size-adjust:100%;
+}
+body{
+  font-family:var(--font-family);
+  background:var(--bg);
+  color:var(--text);
+  height:100dvh;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  -webkit-font-smoothing:antialiased;
+  font-size:var(--text-base);
+  line-height:var(--line-height);
+  font-weight:var(--weight-regular);
+}
+
+/* ═══════════════════════════════════════
+   CONTAINER & SCREENS
+   ═══════════════════════════════════════ */
+.container{
+  width:100%;
+  max-width:460px;
+  margin:0 auto;
+  padding:0 var(--space-4);
+  display:flex;
+  flex-direction:column;
+  flex:1;
+  min-height:0;
+}
+@supports(padding:max(0px)){
+  .container{
+    padding-left:max(16px,env(safe-area-inset-left));
+    padding-right:max(16px,env(safe-area-inset-right));
+  }
+}
+.screen{
+  display:none;
+  flex-direction:column;
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:max(var(--space-4),env(safe-area-inset-bottom));
+}
+.screen.show{display:flex}
+.screen-game{overflow:hidden;padding-bottom:0}
+
+/* ═══════════════════════════════════════
+   START SCREEN — hero, big buttons
+   ═══════════════════════════════════════ */
+.start-hero{
+  padding:var(--space-8) 0 var(--space-4);
+  text-align:center;
+  flex-shrink:0;
+}
+.start-title{
+  font-size:clamp(28px,9vw,40px);
+  font-weight:var(--weight-extrabold);
+  color:var(--text);
+  line-height:1.25;
+  letter-spacing:-0.5px;
+}
+.start-title .accent{color:var(--accent-bulletdodge)}
+.start-sub{
+  font-size:var(--text-base);
+  color:var(--text-secondary);
+  margin-top:var(--space-2);
+  font-weight:var(--weight-medium);
+}
+.start-sub b{
+  color:var(--accent-bulletdodge);
+  font-weight:var(--weight-extrabold);
+}
+.start-sub-small{
+  font-size:var(--text-sm);
+  color:var(--text-muted);
+  margin-top:var(--space-1);
+}
+
+/* Difficulty buttons — big stacked targets */
+.diff-grid{
+  display:flex;
+  flex-direction:column;
+  gap:var(--space-3);
+  flex-shrink:0;
+}
+.diff-btn{
+  padding:var(--space-4) var(--space-5);
+  border-radius:var(--radius);
+  border:3px solid var(--border);
+  background:var(--surface);
+  cursor:pointer;
+  transition:all var(--transition-base);
+  text-align:left;
+  min-height:var(--touch-min);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  font-family:var(--font-family);
+  position:relative;
+  overflow:hidden;
+  box-shadow:var(--shadow-sm);
+  -webkit-tap-highlight-color:transparent;
+}
+.diff-btn:active{transform:scale(0.97)}
+.diff-btn .diff-name{
+  font-size:var(--text-xl);
+  font-weight:var(--weight-bold);
+  color:var(--text);
+  display:block;
+  line-height:1.3;
+}
+.diff-btn .diff-desc{
+  font-size:var(--text-sm);
+  color:var(--text-muted);
+  margin-top:var(--space-1);
+  display:block;
+  font-weight:var(--weight-regular);
+}
+.diff-btn[data-diff="easy"]{border-color:var(--success)}
+.diff-btn[data-diff="easy"] .diff-name{color:var(--success)}
+.diff-btn[data-diff="easy"]:active{background:var(--success-bg)}
+.diff-btn[data-diff="normal"]{border-color:var(--primary)}
+.diff-btn[data-diff="normal"] .diff-name{color:var(--primary)}
+.diff-btn[data-diff="normal"]:active{background:var(--primary-light)}
+.diff-btn[data-diff="hard"]{border-color:var(--warning)}
+.diff-btn[data-diff="hard"] .diff-name{color:var(--warning)}
+.diff-btn[data-diff="hard"]:active{background:var(--warning-bg)}
+
+/* Continue button — shown only with a valid save */
+.btn-continue{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:var(--space-1);
+  width:100%;
+  margin-top:var(--space-4);
+  padding:var(--space-4) var(--space-5);
+  border-radius:var(--btn-radius);
+  border:3px solid var(--accent-bulletdodge);
+  background:var(--accent-bulletdodge);
+  color:#FFFFFF;
+  font-size:var(--text-xl);
+  font-weight:var(--weight-extrabold);
+  font-family:var(--font-family);
+  cursor:pointer;
+  min-height:var(--touch-min);
+  position:relative;
+  overflow:hidden;
+  box-shadow:var(--shadow-md);
+  line-height:1.3;
+  transition:all var(--transition-base);
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-continue:active{background:#BE185D;transform:scale(0.97)}
+.btn-continue[hidden]{display:none}
+.btn-continue-sub{font-size:var(--text-sm);font-weight:var(--weight-bold);opacity:0.95}
+
+/* Records summary */
+.records-summary{margin-top:var(--space-6);flex-shrink:0}
+.section-title{
+  font-size:var(--text-lg);
+  font-weight:var(--weight-extrabold);
+  color:var(--text);
+  text-align:center;
+  margin-bottom:var(--space-3);
+}
+.records-list{display:flex;flex-direction:column;gap:var(--space-2)}
+.record-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:var(--space-3);
+  padding:var(--space-3) var(--space-5);
+  background:var(--surface-raised);
+  border:2px solid var(--border);
+  border-radius:var(--btn-radius);
+}
+.record-diff{
+  font-size:var(--text-base);
+  font-weight:var(--weight-bold);
+  color:var(--text);
+}
+.record-best{display:flex;flex-direction:column;align-items:flex-end}
+.record-time{
+  font-size:clamp(16px,5vw,22px);
+  font-weight:var(--weight-extrabold);
+  color:var(--text);
+  font-variant-numeric:tabular-nums;
+  line-height:1.2;
+}
+.record-score{
+  font-size:var(--text-xs);
+  color:var(--text-muted);
+  font-weight:var(--weight-semibold);
+  line-height:1.2;
+}
+
+.start-actions{
+  display:flex;
+  flex-direction:column;
+  gap:var(--space-3);
+  margin-top:var(--space-6);
+  flex-shrink:0;
+}
+
+/* ═══════════════════════════════════════
+   GAME SCREEN — HUD + ARENA
+   ═══════════════════════════════════════ */
+.hud{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:var(--space-2);
+  padding:var(--space-3) 0;
+  flex-shrink:0;
+  flex-wrap:wrap;
+}
+.hud-diff{
+  display:flex;
+  align-items:center;
+  padding:var(--space-2) var(--space-4);
+  border-radius:var(--radius);
+  border:2px solid var(--border);
+  font-size:var(--text-base);
+  font-weight:var(--weight-bold);
+  min-height:44px;
+  white-space:nowrap;
+  line-height:1.2;
+}
+.hud-diff.diff-easy{background:var(--success-bg);color:var(--success);border-color:var(--success)}
+.hud-diff.diff-normal{background:var(--primary-light);color:var(--primary);border-color:var(--primary)}
+.hud-diff.diff-hard{background:var(--warning-bg);color:var(--warning);border-color:var(--warning)}
+.hud-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:var(--space-1) var(--space-3);
+  border-radius:var(--radius);
+  border:2px solid var(--border);
+  background:var(--surface);
+  min-height:44px;
+  min-width:80px;
+}
+.hud-label{
+  font-size:var(--text-xs);
+  color:var(--text-muted);
+  font-weight:var(--weight-semibold);
+  line-height:1.2;
+}
+.hud-value{
+  font-size:var(--text-lg);
+  font-weight:var(--weight-extrabold);
+  color:var(--text);
+  font-variant-numeric:tabular-nums;
+  line-height:1.2;
+}
+.hud-hearts{
+  font-size:clamp(16px,5vw,22px);
+  letter-spacing:2px;
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  white-space:nowrap;
+  line-height:1.2;
+}
+.hud-pause{
+  width:56px;
+  height:56px;
+  border-radius:var(--btn-radius);
+  border:2.5px solid var(--border);
+  background:var(--surface);
+  font-size:var(--text-xl);
+  font-family:var(--font-family);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+  transition:all var(--transition-fast);
+  -webkit-tap-highlight-color:transparent;
+}
+.hud-pause:active{background:var(--surface-raised);transform:scale(0.95)}
+
+/* Arena — DOM game field */
+.arena{
+  position:relative;
+  width:100%;
+  height:min(58vh,560px);
+  flex-shrink:0;
+  background:linear-gradient(180deg,#EFF6FF 0%,#F3F4F6 100%);
+  border:3px solid var(--border-thick);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);
+  overflow:hidden;
+  touch-action:none;
+  -webkit-tap-highlight-color:transparent;
+  margin:var(--space-1) auto 0;
+  will-change:transform;
+}
+.arena.shake{animation:arenaShake 320ms ease}
+@keyframes arenaShake{
+  0%,100%{transform:translate(0,0)}
+  20%{transform:translate(-6px,3px)}
+  40%{transform:translate(5px,-4px)}
+  60%{transform:translate(-4px,-3px)}
+  80%{transform:translate(3px,4px)}
+}
+.bullet-layer{position:absolute;inset:0;pointer-events:none;z-index:1}
+.bullet{
+  position:absolute;
+  left:0;top:0;
+  width:14px;height:14px;
+  border-radius:50%;
+  background:#DC2626;
+  border:2px solid #991B1B;
+  box-shadow:0 1px 4px rgba(0,0,0,0.35);
+  margin:-7px 0 0 -7px;
+  will-change:transform;
+}
+.player{
+  position:absolute;
+  left:0;top:0;
+  width:44px;height:44px;
+  border-radius:50%;
+  background:var(--primary);
+  border:3px solid #FFFFFF;
+  box-shadow:0 3px 10px rgba(0,0,0,0.35);
+  margin:-22px 0 0 -22px;
+  will-change:transform;
+  z-index:2;
+}
+.player.invulnerable{animation:playerBlink 0.35s ease infinite}
+@keyframes playerBlink{
+  0%,100%{opacity:1}
+  50%{opacity:0.25}
+}
+.game-hint{
+  flex-shrink:0;
+  text-align:center;
+  font-size:var(--text-sm);
+  color:var(--text-muted);
+  padding:var(--space-2) 0;
+  font-weight:var(--weight-medium);
+}
+
+/* ═══════════════════════════════════════
+   MODALS — large text, big buttons
+   ═══════════════════════════════════════ */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.50);
+  display:none;
+  justify-content:center;
+  z-index:100;
+  padding:var(--space-6);
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+.modal-overlay.show{display:flex}
+.modal{
+  position:relative;
+  background:var(--surface);
+  border-radius:var(--radius-lg);
+  padding:var(--space-8) var(--space-6);
+  width:100%;
+  max-width:400px;
+  box-shadow:0 24px 64px rgba(0,0,0,0.25);
+  text-align:center;
+  animation:modalIn 250ms ease;
+  border:3px solid var(--border);
+  margin:auto;
+}
+@keyframes modalIn{
+  from{opacity:0;transform:scale(0.92) translateY(10px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+.modal h2{
+  font-size:clamp(20px,6vw,32px);
+  font-weight:var(--weight-extrabold);
+  margin-bottom:var(--space-3);
+  color:var(--text);
+  line-height:1.3;
+  white-space:nowrap;
+}
+.modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:var(--space-3);
+  margin-bottom:var(--space-3);
+}
+.modal-header h2{margin-bottom:0}
+.modal p{
+  font-size:clamp(16px,4vw,20px);
+  color:var(--text-secondary);
+  margin-bottom:var(--space-4);
+  line-height:var(--line-height);
+  font-weight:var(--weight-regular);
+}
+.modal-emoji{font-size:clamp(32px,10vw,48px);display:block}
+.modal-close{
+  position:absolute;
+  top:var(--space-2);
+  right:var(--space-2);
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  border:2px solid var(--border-thin);
+  background:var(--surface);
+  color:var(--text);
+  font-size:var(--text-lg);
+  line-height:1;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--font-family);
+  position:relative;
+  overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+.modal-close:active{background:var(--surface-raised);transform:scale(0.94)}
+
+.modal-actions{
+  display:flex;
+  gap:var(--space-3);
+  margin-top:var(--space-4);
+}
+.modal-actions.column{flex-direction:column}
+.btn{
+  flex:1;
+  padding:var(--space-4) var(--space-5);
+  border-radius:var(--btn-radius);
+  border:none;
+  font-size:var(--text-lg);
+  font-weight:var(--weight-bold);
+  font-family:var(--font-family);
+  cursor:pointer;
+  transition:all var(--transition-base);
+  min-height:var(--touch-min);
+  line-height:1.3;
+  position:relative;
+  overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-primary{background:var(--primary);color:#FFFFFF}
+.btn-primary:active{background:var(--primary-hover);transform:scale(0.97)}
+.btn-secondary{background:var(--surface-raised);color:var(--text);border:2.5px solid var(--border)}
+.btn-secondary:active{background:var(--border-thin);transform:scale(0.97)}
+
+/* Portal button — go back to the games portal (모달마다 필수) */
+.btn-portal{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:var(--space-2);
+  width:100%;
+  margin-top:var(--space-3);
+  padding:var(--space-3) var(--space-5);
+  border-radius:var(--btn-radius);
+  border:2.5px solid var(--border);
+  background:var(--surface-raised);
+  color:var(--text);
+  font-size:var(--text-base);
+  font-weight:var(--weight-bold);
+  font-family:var(--font-family);
+  cursor:pointer;
+  transition:all var(--transition-base);
+  min-height:44px;
+  line-height:1.2;
+  position:relative;
+  overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-portal:active{background:var(--border-thin);transform:scale(0.98)}
+
+/* Completion stats */
+.completion-stats{
+  display:flex;
+  gap:var(--space-3);
+  justify-content:center;
+  margin:var(--space-3) 0 var(--space-4);
+  flex-wrap:nowrap;
+}
+.stat{text-align:center;min-width:0}
+.stat-val{
+  font-size:clamp(16px,5vw,24px);
+  font-weight:var(--weight-extrabold);
+  color:var(--text);
+  display:block;
+  line-height:1.2;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+.stat-label{
+  font-size:clamp(12px,3vw,14px);
+  color:var(--text-muted);
+  display:block;
+  margin-top:var(--space-1);
+  font-weight:var(--weight-semibold);
+  white-space:nowrap;
+}
+
+/* New record badge */
+.new-record-badge{
+  background:linear-gradient(135deg,#F59E0B,#D97706);
+  color:#FFFFFF;
+  font-size:var(--text-lg);
+  font-weight:var(--weight-extrabold);
+  padding:var(--space-2) var(--space-4);
+  border-radius:var(--radius);
+  margin:var(--space-3) 0;
+  animation:pulse 1s ease infinite;
+  display:block;
+}
+.new-record-badge[hidden]{display:none}
+@keyframes pulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.05)}
+}
+
+/* Rules modal — 큰 글씨 */
+.modal-rules{
+  max-width:380px;
+  padding:var(--space-5) var(--space-5);
+}
+.modal-rules .modal-header{margin-bottom:var(--space-2)}
+.modal-rules .modal-actions{margin-top:var(--space-3)}
+.rules-content{margin:var(--space-2) 0;text-align:left}
+.rule-section{margin-bottom:var(--space-4)}
+.rule-section:last-child{margin-bottom:0}
+.rule-section h3{
+  font-size:var(--text-lg);
+  font-weight:var(--weight-bold);
+  margin-bottom:var(--space-1);
+  color:var(--text);
+}
+.rule-section p{
+  font-size:var(--text-base);
+  line-height:1.55;
+  color:var(--text-secondary);
+  margin-bottom:0;
+}
+
+/* ═══════════════════════════════════════
+   TOAST — large, impossible to miss
+   ═══════════════════════════════════════ */
+.toast{
+  position:fixed;
+  top:calc(20px + env(safe-area-inset-top));
+  left:50%;transform:translateX(-50%) translateY(-20px);
+  background:var(--text);
+  color:#FFFFFF;
+  padding:var(--space-4) var(--space-6);
+  border-radius:var(--radius-lg);
+  font-size:var(--text-base);
+  font-weight:var(--weight-bold);
+  font-family:var(--font-family);
+  opacity:0;
+  transition:all 300ms ease;
+  z-index:200;
+  pointer-events:none;
+  white-space:nowrap;
+  box-shadow:var(--shadow-lg);
+  border:2px solid var(--border-thick);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Focus styles — visible for keyboard users */
+button:focus-visible{
+  outline:3px solid var(--primary);
+  outline-offset:2px;
+}
+
+/* Ripple feedback */
+.ripple{
+  position:absolute;
+  border-radius:50%;
+  background:rgba(17,24,39,0.15);
+  transform:scale(0);
+  animation:rippleAnim 400ms ease-out forwards;
+  pointer-events:none;
+}
+@keyframes rippleAnim{
+  to{transform:scale(2.5);opacity:0}
+}
+
+/* Scrollbar hide */
+::-webkit-scrollbar{display:none}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE — landscape & small screens
+   ═══════════════════════════════════════ */
+@media(max-height:700px){
+  .start-hero{padding:var(--space-6) 0 var(--space-3)}
+  .start-title{font-size:clamp(24px,7vw,32px)}
+  .hud{padding:var(--space-2) 0}
+  .hud-diff,.hud-item{min-height:40px}
+  .hud-pause{width:48px;height:48px}
+  .arena{height:min(50vh,420px)}
+  .modal{padding:var(--space-4) var(--space-6)}
+  .modal-header{margin-bottom:var(--space-2)}
+  .modal p{margin-bottom:var(--space-3);font-size:var(--text-base)}
+  .btn{padding:var(--space-2) var(--space-4)}
+  .modal-actions{margin-top:var(--space-3)}
+  .btn-portal{margin-top:var(--space-2)}
+  .records-summary{margin-top:var(--space-4)}
+  .start-actions{margin-top:var(--space-4)}
+}
+@media(max-height:640px){
+  .arena{height:min(46vh,380px)}
+  .game-hint{display:none}
+  .diff-btn{padding:var(--space-2) var(--space-4);min-height:48px}
+}
+@media(max-width:500px){
+  .arena{height:min(54vh,480px)}
+}
+@media(max-width:360px){
+  .hud{gap:var(--space-1)}
+  .hud-diff{padding:var(--space-1) var(--space-2);font-size:var(--text-sm)}
+  .hud-item{min-width:64px;padding:var(--space-1) var(--space-2)}
+  .hud-value{font-size:var(--text-base)}
+  .record-row{padding:var(--space-2) var(--space-4)}
+  .arena{height:min(48vh,400px)}
+}
+@media(min-width:760px){
+  .arena{height:min(62vh,560px)}
+  .btn-portal{min-height:48px}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ══ START SCREEN ══ -->
+  <section id="screenStart" class="screen show" aria-label="시작 화면">
+    <div class="start-hero">
+      <h1 class="start-title">🎯 아빠의<br><span class="accent">총알피하기</span></h1>
+      <p class="start-sub">떨어지는 총알을 피해 <b>90초</b>를 버티세요!</p>
+      <p class="start-sub-small">목숨 3개 · 난이도별 최고 기록 자동 저장</p>
+    </div>
+
+    <div class="diff-grid" role="group" aria-label="난이도 선택">
+      <button class="diff-btn" data-diff="easy" type="button" aria-label="쉬움 난이도로 시작">
+        <span class="diff-name">쉬움</span>
+        <span class="diff-desc">천천히 떨어지는 총알 · 최대 32발</span>
+      </button>
+      <button class="diff-btn" data-diff="normal" type="button" aria-label="보통 난이도로 시작">
+        <span class="diff-name">보통</span>
+        <span class="diff-desc">보통 속도의 총알 · 최대 45발</span>
+      </button>
+      <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도로 시작">
+        <span class="diff-name">어려움</span>
+        <span class="diff-desc">빠르고 많은 총알 · 최대 60발</span>
+      </button>
+    </div>
+
+    <button class="btn-continue" id="btnContinue" type="button" hidden>
+      <span>▶️ 이어하기</span>
+      <span class="btn-continue-sub" id="btnContinueSub"></span>
+    </button>
+
+    <div class="records-summary">
+      <h2 class="section-title">🏆 최고 기록</h2>
+      <div class="records-list" id="recordsList"></div>
+    </div>
+
+    <div class="start-actions">
+      <button class="btn btn-secondary" id="btnHowto" type="button">📋 게임 방법</button>
+      <button class="btn-portal" type="button">🎮 다른 게임하기</button>
+    </div>
+  </section>
+
+  <!-- ══ GAME SCREEN ══ -->
+  <section id="screenGame" class="screen screen-game" aria-label="게임 화면">
+    <div class="hud">
+      <span class="hud-diff diff-easy" id="hudDiff">쉬움</span>
+      <div class="hud-item">
+        <span class="hud-label">점수</span>
+        <span class="hud-value" id="hudTime">00:00</span>
+      </div>
+      <span class="hud-hearts" id="hudHearts" aria-label="남은 목숨 3개">❤️❤️❤️</span>
+      <button class="hud-pause" id="btnPause" type="button" aria-label="일시정지">⏸️</button>
+    </div>
+
+    <div class="arena" id="arena" aria-label="게임 필드. 방향키나 마우스, 손가락으로 캐릭터를 움직이세요">
+      <div class="bullet-layer" id="bulletLayer" aria-hidden="true"></div>
+      <div class="player" id="player" aria-hidden="true"></div>
+    </div>
+
+    <p class="game-hint">방향키 · 마우스 · 손가락으로 움직이세요</p>
+  </section>
+</div>
+
+<!-- Pause Modal -->
+<div class="modal-overlay" id="modalPause">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-emoji">⏸️</span>
+      <h2>일시정지</h2>
+    </div>
+    <p>잠시 멈췄어요.<br>쉬었다가 계속하세요.</p>
+    <div class="modal-actions column">
+      <button class="btn btn-primary" id="btnPauseResume" type="button">▶️ 계속하기</button>
+      <button class="btn btn-secondary" id="btnPauseRestart" type="button">🔄 처음부터 다시</button>
+      <button class="btn btn-secondary" id="btnPauseDiff" type="button">🎚️ 난이도 선택</button>
+    </div>
+    <button class="btn-portal" type="button">🎮 다른 게임하기</button>
+  </div>
+</div>
+
+<!-- Difficulty Select Modal -->
+<div class="modal-overlay" id="modalDiff">
+  <div class="modal">
+    <button class="modal-close" id="btnCloseDiff" type="button" aria-label="닫기">✕</button>
+    <div class="modal-header">
+      <span class="modal-emoji">🎚️</span>
+      <h2>난이도 선택</h2>
+    </div>
+    <p>난이도를 골라 다시 시작하세요</p>
+    <div class="diff-grid" role="group" aria-label="난이도 선택">
+      <button class="diff-btn" data-diff="easy" type="button" aria-label="쉬움 난이도"><span class="diff-name">쉬움</span><span class="diff-desc">천천히 떨어지는 총알 · 최대 32발</span></button>
+      <button class="diff-btn" data-diff="normal" type="button" aria-label="보통 난이도"><span class="diff-name">보통</span><span class="diff-desc">보통 속도의 총알 · 최대 45발</span></button>
+      <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도"><span class="diff-name">어려움</span><span class="diff-desc">빠르고 많은 총알 · 최대 60발</span></button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="btnCancelDiff" type="button">취소</button>
+      <button class="btn btn-primary" id="btnConfirmDiff" type="button">시작하기</button>
+    </div>
+    <button class="btn-portal" type="button">🎮 다른 게임하기</button>
+  </div>
+</div>
+
+<!-- Game Over Modal -->
+<div class="modal-overlay" id="modalGameOver">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-emoji">😢</span>
+      <h2>아쉬워요!</h2>
+    </div>
+    <p id="goMessage">총알에 맞아 목숨이 모두 떨어졌어요</p>
+    <div id="goNewRecord" class="new-record-badge" hidden>🏆 새 기록!</div>
+    <div class="completion-stats">
+      <div class="stat"><span class="stat-val" id="goTime">00:00</span><span class="stat-label">버틴 시간</span></div>
+      <div class="stat"><span class="stat-val" id="goScore">0점</span><span class="stat-label">점수</span></div>
+      <div class="stat"><span class="stat-val" id="goBest">--</span><span class="stat-label">최고 기록</span></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="btnGoRetry" type="button">🔄 다시 도전</button>
+      <button class="btn btn-secondary" id="btnGoDiff" type="button">🎚️ 난이도 선택</button>
+    </div>
+    <button class="btn-portal" type="button">🎮 다른 게임하기</button>
+  </div>
+</div>
+
+<!-- Win Modal -->
+<div class="modal-overlay" id="modalWin">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-emoji">🎉</span>
+      <h2>축하해요!<br>90초 클리어!</h2>
+    </div>
+    <p id="winMessage">쉬움 난이도를 클리어했어요!</p>
+    <div id="winNewRecord" class="new-record-badge" hidden>🏆 새 기록!</div>
+    <div class="completion-stats">
+      <div class="stat"><span class="stat-val" id="winTime">01:30</span><span class="stat-label">클리어 시간</span></div>
+      <div class="stat"><span class="stat-val" id="winScore">900점</span><span class="stat-label">점수</span></div>
+      <div class="stat"><span class="stat-val" id="winBest">--</span><span class="stat-label">최고 기록</span></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="btnWinRetry" type="button">🔄 다시 도전</button>
+      <button class="btn btn-secondary" id="btnWinDiff" type="button">🎚️ 난이도 선택</button>
+    </div>
+    <button class="btn-portal" type="button">🎮 다른 게임하기</button>
+  </div>
+</div>
+
+<!-- Rules Modal -->
+<div class="modal-overlay" id="modalRules">
+  <div class="modal modal-rules">
+    <button class="modal-close" id="btnCloseRules" type="button" aria-label="닫기">✕</button>
+    <div class="modal-header">
+      <span class="modal-emoji">📋</span>
+      <h2>게임 방법</h2>
+    </div>
+    <div class="rules-content">
+      <div class="rule-section">
+        <h3>🎯 목표</h3>
+        <p>떨어지는 총알을 피해서 <b>90초</b>를 버티면 클리어예요. 목숨은 3개! 총알에 맞으면 목숨이 1개 줄어요.</p>
+      </div>
+      <div class="rule-section">
+        <h3>⌨️ 컴퓨터 · 키보드</h3>
+        <p>방향키(↑↓←→)나 <b>W·A·S·D</b> 키로 캐릭터를 움직여요. <b>P</b>나 <b>Esc</b> 키를 누르면 잠시 멈출 수 있어요.</p>
+      </div>
+      <div class="rule-section">
+        <h3>🖱️ 컴퓨터 · 마우스</h3>
+        <p>게임 화면 안에서 마우스를 움직이면 캐릭터가 마우스를 따라와요. 버튼을 누를 필요 없어요.</p>
+      </div>
+      <div class="rule-section">
+        <h3>👆 휴대폰 · 손가락</h3>
+        <p>게임 화면을 손가락으로 누른 채 움직이면 캐릭터가 손가락을 따라와요. 손가락 위치가 캐릭터의 중심이 돼요.</p>
+      </div>
+      <div class="rule-section">
+        <h3>❤️ 목숨과 무적</h3>
+        <p>총알에 맞으면 목숨 1개가 줄어요. 맞은 직후 <b>1.5초</b> 동안은 캐릭터가 깜빡이며 무적이 돼요. 목숨이 0개가 되면 게임이 끝나요.</p>
+      </div>
+      <div class="rule-section">
+        <h3>🏆 기록과 이어하기</h3>
+        <p>난이도별 최고 기록이 자동으로 저장돼요. 게임을 멈추면 시작 화면의 <b>이어하기</b> 버튼으로 계속할 수 있어요.</p>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="btnCloseRulesBottom" type="button">닫기</button>
+    </div>
+    <button class="btn-portal" type="button">🎮 다른 게임하기</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+
+// ═══════════════════════════════════════════
+// CONSTANTS & CONFIG
+// ═══════════════════════════════════════════
+const STORAGE_KEY = 'bulletdodge_game_v1';
+const RECORDS_KEY = 'bulletdodge_records_v1';
+const PORTAL_URL = 'https://appa-games.github.io/';
+
+const WIN_SECONDS = 90;
+const MAX_LIVES = 3;
+const PLAYER_SPEED = 340;       // px/s (키보드)
+const PLAYER_R = 22;            // 시각 반지름 (44px 원)
+const HIT_R = 19;               // 충돌 판정 반지름 (관대한 히트박스)
+const BULLET_R = 7;             // 총알 반지름 (14px 원)
+const COLLIDE_R2 = (HIT_R + BULLET_R) * (HIT_R + BULLET_R);
+const MAX_BULLETS = 60;         // 풀 크기 = 최대 활성 총알 수 (어려움 기준)
+const INVULN_SECONDS = 1.5;
+const RAMP_RATE = 0.02;         // 초당 +2% 난이도 상승
+const MAX_RAMP = 2.5;           // 상승 한도 (2.5배)
+
+const DIFFICULTY_CONFIG = {
+  easy:   { label: '쉬움',   bulletSpeed: 110, spawnStart: 1100, spawnMin: 500,  maxBullets: 32, volley: [1, 1],   aimChance: 0.30, sideChance: 0 },
+  normal: { label: '보통',   bulletSpeed: 150, spawnStart: 900,  spawnMin: 400,  maxBullets: 45, volley: [1, 2],   aimChance: 0.50, sideChance: 0 },
+  hard:   { label: '어려움', bulletSpeed: 190, spawnStart: 700,  spawnMin: 280,  maxBullets: 60, volley: [1, 3],   aimChance: 0.65, sideChance: 0.15 }
+};
+
+// ═══════════════════════════════════════════
+// DOM REFERENCES
+// ═══════════════════════════════════════════
+const screenStart = document.getElementById('screenStart');
+const screenGame = document.getElementById('screenGame');
+const recordsList = document.getElementById('recordsList');
+const btnContinue = document.getElementById('btnContinue');
+const btnContinueSub = document.getElementById('btnContinueSub');
+const btnHowto = document.getElementById('btnHowto');
+
+const hudDiff = document.getElementById('hudDiff');
+const hudTime = document.getElementById('hudTime');
+const hudHearts = document.getElementById('hudHearts');
+const btnPause = document.getElementById('btnPause');
+const arenaEl = document.getElementById('arena');
+const bulletLayerEl = document.getElementById('bulletLayer');
+const playerEl = document.getElementById('player');
+
+const modalPause = document.getElementById('modalPause');
+const modalDiff = document.getElementById('modalDiff');
+const modalGameOver = document.getElementById('modalGameOver');
+const modalWin = document.getElementById('modalWin');
+const modalRules = document.getElementById('modalRules');
+
+const goMessage = document.getElementById('goMessage');
+const goTime = document.getElementById('goTime');
+const goScore = document.getElementById('goScore');
+const goBest = document.getElementById('goBest');
+const goNewRecord = document.getElementById('goNewRecord');
+const winMessage = document.getElementById('winMessage');
+const winTime = document.getElementById('winTime');
+const winScore = document.getElementById('winScore');
+const winBest = document.getElementById('winBest');
+const winNewRecord = document.getElementById('winNewRecord');
+
+const btnPauseResume = document.getElementById('btnPauseResume');
+const btnPauseRestart = document.getElementById('btnPauseRestart');
+const btnPauseDiff = document.getElementById('btnPauseDiff');
+const btnCloseDiff = document.getElementById('btnCloseDiff');
+const btnCancelDiff = document.getElementById('btnCancelDiff');
+const btnConfirmDiff = document.getElementById('btnConfirmDiff');
+const btnGoRetry = document.getElementById('btnGoRetry');
+const btnGoDiff = document.getElementById('btnGoDiff');
+const btnWinRetry = document.getElementById('btnWinRetry');
+const btnWinDiff = document.getElementById('btnWinDiff');
+const btnCloseRules = document.getElementById('btnCloseRules');
+const btnCloseRulesBottom = document.getElementById('btnCloseRulesBottom');
+const portalBtns = document.querySelectorAll('.btn-portal');
+
+const diffBtns = document.querySelectorAll('.diff-btn');
+const toastEl = document.getElementById('toast');
+
+// ═══════════════════════════════════════════
+// GAME STATE
+// ═══════════════════════════════════════════
+let phase = 'idle';              // idle | playing | paused | over | won
+let difficulty = 'easy';
+let lives = MAX_LIVES;
+let elapsed = 0;                 // 초 단위 (점수 = 생존 시간)
+let lastSec = -1;
+let createdAt = Date.now();
+let invuln = 0;
+let running = false;
+let rafId = null;
+let lastTs = 0;
+let spawnTimer = 0;
+let activeCount = 0;
+let invulnTimer = null;
+
+let arenaW = 0;
+let arenaH = 0;
+let arenaLeft = 0;
+let arenaTop = 0;
+
+const player = { x: 100, y: 100 };
+const keyState = { up: false, down: false, left: false, right: false };
+let touchActive = false;
+let touchTarget = null;
+let mouseInside = false;
+let mouseTarget = null;
+
+let bullets = [];
+let toastTimeout = null;
+
+// ═══════════════════════════════════════════
+// RECORDS (localStorage)
+// ═══════════════════════════════════════════
+function getDefaultRecords() {
+  return {
+    easy:   { bestTime: 0, bestScore: 0, gamesPlayed: 0, gamesWon: 0 },
+    normal: { bestTime: 0, bestScore: 0, gamesPlayed: 0, gamesWon: 0 },
+    hard:   { bestTime: 0, bestScore: 0, gamesPlayed: 0, gamesWon: 0 }
+  };
+}
+
+function loadRecords() {
+  try {
+    const raw = localStorage.getItem(RECORDS_KEY);
+    if (!raw) return getDefaultRecords();
+    const data = JSON.parse(raw);
+    const defaults = getDefaultRecords();
+    // 난이도별 키가 빠져 있으면 기본값으로 채움 (누락 방어)
+    for (const d of Object.keys(defaults)) {
+      if (typeof data[d] !== 'object' || !data[d]) {
+        data[d] = defaults[d];
+      } else {
+        for (const k of Object.keys(defaults[d])) {
+          if (typeof data[d][k] !== 'number' || data[d][k] < 0) data[d][k] = defaults[d][k];
+        }
+      }
+    }
+    return data;
+  } catch (e) {
+    console.warn('Failed to load records:', e);
+    return getDefaultRecords();
+  }
+}
+
+function saveRecords(records) {
+  try {
+    localStorage.setItem(RECORDS_KEY, JSON.stringify(records));
+  } catch (e) {
+    console.warn('Failed to save records:', e);
+  }
+}
+
+function renderStartRecords() {
+  const records = loadRecords();
+  const order = ['easy', 'normal', 'hard'];
+  let html = '';
+  for (let i = 0; i < order.length; i++) {
+    const d = order[i];
+    const rec = records[d];
+    const time = rec.bestTime > 0 ? formatTime(rec.bestTime) : '--';
+    const score = rec.bestScore > 0 ? formatNumber(rec.bestScore) + '점' : '--';
+    html += '<div class="record-row">' +
+      '<span class="record-diff">' + DIFFICULTY_CONFIG[d].label + '</span>' +
+      '<span class="record-best"><span class="record-time">' + time + '</span>' +
+      '<span class="record-score">최고 점수 ' + score + ' · 완주 ' + rec.gamesWon + '회</span></span>' +
+      '</div>';
+  }
+  recordsList.innerHTML = html;
+}
+
+// 게임 종료(오버/클리어) 시 기록 갱신 — 공통
+function updateRecordsOnFinish(winFlag) {
+  const records = loadRecords();
+  const rec = records[difficulty];
+  const secs = Math.floor(elapsed);
+  const sc = secs * 10;
+  let isNewBest = false;
+  if (secs > rec.bestTime) { rec.bestTime = secs; isNewBest = true; }
+  if (sc > rec.bestScore) { rec.bestScore = sc; isNewBest = true; }
+  rec.gamesPlayed++;
+  if (winFlag) rec.gamesWon++;
+  saveRecords(records);
+  return isNewBest;
+}
+
+// ═══════════════════════════════════════════
+// PERSISTENCE (localStorage)
+// ═══════════════════════════════════════════
+function saveGame() {
+  if (phase !== 'playing' && phase !== 'paused') return;
+  const data = {
+    version: 1,
+    difficulty: difficulty,
+    score: Math.floor(elapsed),
+    lives: lives,
+    elapsed: elapsed,
+    createdAt: createdAt,
+    lastSavedAt: Date.now()
+  };
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    console.warn('Failed to save game:', e);
+  }
+}
+
+function clearSave() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (e) {}
+}
+
+// 저장본 읽기 + shape/버전 검증. 유효하지 않으면 null.
+function loadSave() {
+  let data = null;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) data = JSON.parse(raw);
+  } catch (e) {
+    return null;
+  }
+  if (!data || typeof data !== 'object') return null;
+  if (data.version !== 1) return null;
+  if (!DIFFICULTY_CONFIG[data.difficulty]) return null;
+  if (typeof data.lives !== 'number' || data.lives !== Math.floor(data.lives) ||
+      data.lives < 1 || data.lives > MAX_LIVES) return null;
+  if (typeof data.elapsed !== 'number' || data.elapsed < 0 || data.elapsed >= WIN_SECONDS) return null;
+  if (typeof data.score !== 'number' || data.score < 0) return null;
+  return data;
+}
+
+function hasSave() {
+  return loadSave() !== null;
+}
+
+function updateContinueButton() {
+  const save = loadSave();
+  if (save) {
+    btnContinueSub.textContent = DIFFICULTY_CONFIG[save.difficulty].label +
+      ' · ' + formatTime(Math.floor(save.elapsed)) + ' · 목숨 ' + save.lives + '개';
+    btnContinue.hidden = false;
+  } else {
+    btnContinue.hidden = true;
+  }
+}
+
+// ═══════════════════════════════════════════
+// BULLET POOL — divs are created once
+// ═══════════════════════════════════════════
+function createBulletPool() {
+  for (let i = 0; i < MAX_BULLETS; i++) {
+    const el = document.createElement('div');
+    el.className = 'bullet';
+    el.style.display = 'none';
+    bulletLayerEl.appendChild(el);
+    bullets.push({ el: el, active: false, x: 0, y: 0, vx: 0, vy: 0 });
+  }
+}
+
+function resetBullets() {
+  for (let i = 0; i < MAX_BULLETS; i++) {
+    bullets[i].active = false;
+    bullets[i].el.style.display = 'none';
+  }
+  activeCount = 0;
+}
+
+// ═══════════════════════════════════════════
+// GAME LOGIC
+// ═══════════════════════════════════════════
+function currentRamp() {
+  return Math.min(MAX_RAMP, 1 + RAMP_RATE * elapsed);
+}
+
+function randomInt(min, max) {
+  return min + Math.floor(Math.random() * (max - min + 1));
+}
+
+function clamp(v, lo, hi) {
+  return v < lo ? lo : (v > hi ? hi : v);
+}
+
+function spawnBullet() {
+  const cfg = DIFFICULTY_CONFIG[difficulty];
+  if (activeCount >= cfg.maxBullets) return;
+  let idx = -1;
+  for (let i = 0; i < MAX_BULLETS; i++) {
+    if (!bullets[i].active) { idx = i; break; }
+  }
+  if (idx < 0) return;
+
+  const speed = cfg.bulletSpeed * currentRamp();
+  const b = bullets[idx];
+  const W = arenaW;
+  const H = arenaH;
+  const px = player.x;
+  const py = player.y;
+
+  let type;
+  if (cfg.sideChance > 0 && Math.random() < cfg.sideChance) {
+    type = 'side';
+  } else if (Math.random() < cfg.aimChance) {
+    type = 'aim';
+  } else {
+    type = Math.random() < 0.6 ? 'drop' : 'diagonal';
+  }
+
+  if (type === 'drop') {
+    // (1) 위에서 아래로 직선 낙하
+    b.x = PLAYER_R + Math.random() * Math.max(0, W - 2 * PLAYER_R);
+    b.y = -20;
+    b.vx = 0;
+    b.vy = speed;
+  } else if (type === 'aim') {
+    // (2) 생성 시점의 플레이어 위치를 조준
+    b.x = PLAYER_R + Math.random() * Math.max(0, W - 2 * PLAYER_R);
+    b.y = -20;
+    let dx = px - b.x;
+    let dy = py - b.y;
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+    b.vx = dx / len * speed;
+    b.vy = dy / len * speed;
+  } else if (type === 'diagonal') {
+    // (3) 위쪽 모서리에서 대각선
+    const fromLeft = Math.random() < 0.5;
+    b.x = fromLeft ? -20 : W + 20;
+    b.y = -20;
+    b.vx = (fromLeft ? 1 : -1) * speed * 0.7071;
+    b.vy = speed * 0.7071;
+  } else {
+    // (4) 어려움: 옆쪽에서 수평 이동
+    const fromLeft = Math.random() < 0.5;
+    b.x = fromLeft ? -20 : W + 20;
+    b.y = PLAYER_R + Math.random() * Math.max(0, H - 2 * PLAYER_R);
+    b.vx = (fromLeft ? 1 : -1) * speed;
+    b.vy = (Math.random() - 0.5) * speed * 0.4;
+  }
+
+  b.active = true;
+  activeCount++;
+}
+
+function updateBullets(dt) {
+  for (let i = 0; i < MAX_BULLETS; i++) {
+    const b = bullets[i];
+    if (!b.active) continue;
+    b.x += b.vx * dt;
+    b.y += b.vy * dt;
+    if (b.y > arenaH + 40 || b.y < -40 || b.x < -40 || b.x > arenaW + 40) {
+      b.active = false;
+      activeCount--;
+      continue;
+    }
+    if (invuln <= 0) {
+      const dx = b.x - player.x;
+      const dy = b.y - player.y;
+      if (dx * dx + dy * dy < COLLIDE_R2) {
+        hitPlayer(b);
+        if (phase !== 'playing') return;
+      }
+    }
+  }
+}
+
+function updatePlayer(dt) {
+  const minX = PLAYER_R;
+  const minY = PLAYER_R;
+  const maxX = Math.max(minX, arenaW - PLAYER_R);
+  const maxY = Math.max(minY, arenaH - PLAYER_R);
+
+  if (keyState.up || keyState.down || keyState.left || keyState.right) {
+    let dx = 0;
+    let dy = 0;
+    if (keyState.left) dx -= 1;
+    if (keyState.right) dx += 1;
+    if (keyState.up) dy -= 1;
+    if (keyState.down) dy += 1;
+    if (dx !== 0 && dy !== 0) {
+      dx *= 0.70710678;
+      dy *= 0.70710678;
+    }
+    player.x += dx * PLAYER_SPEED * dt;
+    player.y += dy * PLAYER_SPEED * dt;
+  } else if (touchActive && touchTarget) {
+    const t = 1 - Math.exp(-14 * dt);
+    player.x += (touchTarget.x - player.x) * t;
+    player.y += (touchTarget.y - player.y) * t;
+  } else if (mouseInside && mouseTarget) {
+    const t = 1 - Math.exp(-10 * dt);
+    player.x += (mouseTarget.x - player.x) * t;
+    player.y += (mouseTarget.y - player.y) * t;
+  }
+
+  player.x = clamp(player.x, minX, maxX);
+  player.y = clamp(player.y, minY, maxY);
+}
+
+function hitPlayer(b) {
+  b.active = false;
+  activeCount--;
+  lives--;
+  updateHearts();
+  vibrate(30);
+  shakeArena();
+  if (lives <= 0) {
+    finish(false);
+    return;
+  }
+  invuln = INVULN_SECONDS;
+  playerEl.classList.remove('invulnerable');
+  void playerEl.offsetWidth;   // 재시작용 리플로우 (루프 밖, 일회성)
+  playerEl.classList.add('invulnerable');
+  if (invulnTimer) clearTimeout(invulnTimer);
+  invulnTimer = setTimeout(function() {
+    playerEl.classList.remove('invulnerable');
+  }, INVULN_SECONDS * 1000);
+}
+
+function update(dt) {
+  // 시간 흐름
+  elapsed += dt;
+  const s = Math.floor(elapsed);
+  if (s !== lastSec) {
+    lastSec = s;
+    updateHUDTime();
+    if (s >= WIN_SECONDS) {
+      finish(true);
+      return;
+    }
+  }
+
+  // 난이도 상승 램프 + 발사
+  const cfg = DIFFICULTY_CONFIG[difficulty];
+  spawnTimer += dt * 1000;
+  const interval = Math.max(cfg.spawnMin, cfg.spawnStart / currentRamp());
+  if (spawnTimer >= interval) {
+    spawnTimer = 0;
+    const volley = randomInt(cfg.volley[0], cfg.volley[1]);
+    for (let i = 0; i < volley; i++) spawnBullet();
+  }
+
+  // 무적 타이머
+  if (invuln > 0) {
+    invuln -= dt;
+    if (invuln <= 0 && playerEl.classList.contains('invulnerable')) {
+      playerEl.classList.remove('invulnerable');
+    }
+  }
+
+  updatePlayer(dt);
+  updateBullets(dt);
+}
+
+function renderFrame() {
+  // 상태를 먼저 갱신한 뒤, 트랜스폼 일괄 기록 (루프 내 레이아웃 읽기 없음)
+  playerEl.style.transform = 'translate3d(' + (player.x - PLAYER_R) + 'px,' + (player.y - PLAYER_R) + 'px,0)';
+  for (let i = 0; i < MAX_BULLETS; i++) {
+    const b = bullets[i];
+    if (b.active) {
+      b.el.style.display = 'block';
+      b.el.style.transform = 'translate3d(' + b.x + 'px,' + b.y + 'px,0)';
+    } else {
+      b.el.style.display = 'none';
+    }
+  }
+}
+
+function loop(ts) {
+  if (!running) return;
+  let dt = (ts - lastTs) / 1000;
+  lastTs = ts;
+  if (dt < 0) dt = 0;
+  if (dt > 0.05) dt = 0.05;   // 탭 전환 등 큰 점프 방지
+  update(dt);
+  renderFrame();
+  rafId = requestAnimationFrame(loop);
+}
+
+function startLoop() {
+  running = true;
+  lastTs = performance.now();
+  rafId = requestAnimationFrame(loop);
+}
+
+function stopLoop() {
+  running = false;
+  if (rafId) {
+    cancelAnimationFrame(rafId);
+    rafId = null;
+  }
+}
+
+// 게임 종료 — 오버/클리어 공통 처리
+function finish(winFlag) {
+  if (phase === 'over' || phase === 'won') return;
+  phase = winFlag ? 'won' : 'over';
+  stopLoop();
+  playerEl.classList.remove('invulnerable');
+  if (invulnTimer) { clearTimeout(invulnTimer); invulnTimer = null; }
+  clearSave();
+  const isNewBest = updateRecordsOnFinish(winFlag);
+  const secs = Math.floor(elapsed);
+  const sc = secs * 10;
+  const bestTime = loadRecords()[difficulty].bestTime;
+
+  setTimeout(function() {
+    if (winFlag) {
+      winMessage.textContent = DIFFICULTY_CONFIG[difficulty].label + ' 난이도를 클리어했어요!';
+      winTime.textContent = formatTime(secs);
+      winScore.textContent = formatNumber(sc) + '점';
+      winBest.textContent = bestTime > 0 ? formatTime(bestTime) : '--';
+      winNewRecord.hidden = !isNewBest;
+      modalWin.classList.add('show');
+    } else {
+      goMessage.textContent = '(' + DIFFICULTY_CONFIG[difficulty].label + ') 총알에 맞아 목숨이 모두 떨어졌어요';
+      goTime.textContent = formatTime(secs);
+      goScore.textContent = formatNumber(sc) + '점';
+      goBest.textContent = bestTime > 0 ? formatTime(bestTime) : '--';
+      goNewRecord.hidden = !isNewBest;
+      modalGameOver.classList.add('show');
+    }
+  }, 350);
+}
+
+// ═══════════════════════════════════════════
+// UI — screens, HUD, modals
+// ═══════════════════════════════════════════
+function showScreen(name) {
+  const isGame = name === 'game';
+  screenStart.classList.toggle('show', !isGame);
+  screenGame.classList.toggle('show', isGame);
+}
+
+function updateArenaMetrics() {
+  const r = arenaEl.getBoundingClientRect();
+  arenaW = r.width;
+  arenaH = r.height;
+  arenaLeft = r.left;
+  arenaTop = r.top;
+}
+
+function centerPlayer() {
+  if (arenaW > 0 && arenaH > 0) {
+    player.x = arenaW / 2;
+    player.y = arenaH / 2;
+  } else {
+    player.x = 100;
+    player.y = 100;
+  }
+}
+
+function updateHearts() {
+  let hearts = '';
+  for (let i = 0; i < MAX_LIVES; i++) hearts += i < lives ? '❤️' : '🤍';
+  hudHearts.textContent = hearts;
+  hudHearts.setAttribute('aria-label', '남은 목숨 ' + lives + '개');
+}
+
+function updateHUD() {
+  const cfg = DIFFICULTY_CONFIG[difficulty];
+  hudDiff.textContent = cfg.label;
+  hudDiff.className = 'hud-diff diff-' + difficulty;
+  updateHearts();
+  updateHUDTime();
+}
+
+function updateHUDTime() {
+  hudTime.textContent = formatTime(Math.floor(elapsed));
+}
+
+function closeAllModals() {
+  modalPause.classList.remove('show');
+  modalDiff.classList.remove('show');
+  modalGameOver.classList.remove('show');
+  modalWin.classList.remove('show');
+  modalRules.classList.remove('show');
+}
+
+function openDiffModal() {
+  for (let i = 0; i < diffBtns.length; i++) {
+    diffBtns[i].classList.toggle('active', diffBtns[i].dataset.diff === difficulty);
+  }
+  modalDiff.classList.add('show');
+}
+
+function activeDiffFromModal() {
+  const active = document.querySelector('#modalDiff .diff-btn.active');
+  return (active && active.dataset.diff) ? active.dataset.diff : difficulty;
+}
+
+// 새 게임 시작
+function startGame(diff) {
+  if (!DIFFICULTY_CONFIG[diff]) diff = 'easy';
+  difficulty = diff;
+  clearSave();
+  lives = MAX_LIVES;
+  elapsed = 0;
+  lastSec = -1;
+  invuln = 0;
+  phase = 'playing';
+  createdAt = Date.now();
+  spawnTimer = DIFFICULTY_CONFIG[diff].spawnStart;
+  resetBullets();
+  keyState.up = keyState.down = keyState.left = keyState.right = false;
+  showScreen('game');
+  updateArenaMetrics();
+  centerPlayer();
+  updateHUD();
+  closeAllModals();
+  startLoop();
+  showToast('🎮 ' + DIFFICULTY_CONFIG[diff].label + ' 게임 시작!');
+}
+
+// 저장본 이어하기
+function resumeFromSave(save) {
+  difficulty = save.difficulty;
+  lives = save.lives;
+  elapsed = save.elapsed;
+  lastSec = Math.floor(elapsed);
+  invuln = 0;
+  phase = 'playing';
+  createdAt = save.createdAt || Date.now();
+  spawnTimer = DIFFICULTY_CONFIG[difficulty].spawnStart;
+  resetBullets();               // 총알 필드는 새로 비운 채 재개
+  keyState.up = keyState.down = keyState.left = keyState.right = false;
+  showScreen('game');
+  updateArenaMetrics();
+  centerPlayer();
+  updateHUD();
+  closeAllModals();
+  startLoop();
+  showToast('🔄 이어서 시작합니다');
+}
+
+function pauseGame() {
+  if (phase !== 'playing') return;
+  phase = 'paused';
+  stopLoop();
+  keyState.up = keyState.down = keyState.left = keyState.right = false;
+  saveGame();                   // ① 일시정지 시 저장
+  modalPause.classList.add('show');
+  showToast('⏸️ 잠시 멈췄어요');
+}
+
+function resumeGame() {
+  if (phase !== 'paused') return;
+  phase = 'playing';
+  modalPause.classList.remove('show');
+  startLoop();
+  showToast('▶️ 다시 시작합니다');
+}
+
+// ═══════════════════════════════════════════
+// INPUT — keyboard / mouse / touch
+// ═══════════════════════════════════════════
+function pointerToArena(e) {
+  return { x: e.clientX - arenaLeft, y: e.clientY - arenaTop };
+}
+
+function handlePauseKey() {
+  if (modalRules.classList.contains('show')) { modalRules.classList.remove('show'); return; }
+  if (modalDiff.classList.contains('show')) { modalDiff.classList.remove('show'); return; }
+  if (phase === 'playing') { pauseGame(); return; }
+  if (phase === 'paused') { resumeGame(); return; }
+}
+
+function handleEnter() {
+  if (modalRules.classList.contains('show')) { modalRules.classList.remove('show'); return; }
+  if (modalDiff.classList.contains('show')) { confirmDiffStart(); return; }
+  if (modalPause.classList.contains('show')) { resumeGame(); return; }
+  if (modalGameOver.classList.contains('show')) { closeAllModals(); startGame(difficulty); return; }
+  if (modalWin.classList.contains('show')) { closeAllModals(); startGame(difficulty); return; }
+  if (phase === 'idle') {
+    const save = loadSave();
+    if (save) resumeFromSave(save);
+    else startGame('easy');
+  }
+}
+
+function vibrate(ms) {
+  if (typeof navigator.vibrate === 'function') {
+    try { navigator.vibrate(ms); } catch (err) {}
+  }
+}
+
+function shakeArena() {
+  arenaEl.classList.remove('shake');
+  void arenaEl.offsetWidth;   // 애니메이션 재시작 (루프 밖, 일회성)
+  arenaEl.classList.add('shake');
+}
+
+function bindEvents() {
+  // 시작 화면 난이도 버튼 — 바로 시작
+  for (let i = 0; i < diffBtns.length; i++) {
+    diffBtns[i].addEventListener('click', function(e) {
+      addRipple(this, e);
+      if (this.closest('#screenStart')) {
+        startGame(this.dataset.diff);
+      } else {
+        for (let j = 0; j < diffBtns.length; j++) diffBtns[j].classList.remove('active');
+        this.classList.add('active');
+      }
+    });
+  }
+
+  btnContinue.addEventListener('click', function(e) {
+    addRipple(this, e);
+    const save = loadSave();
+    if (save) resumeFromSave(save);
+  });
+
+  btnHowto.addEventListener('click', function(e) {
+    e.stopPropagation();
+    addRipple(this, e);
+    modalRules.classList.add('show');
+  });
+
+  btnPause.addEventListener('click', function(e) {
+    addRipple(this, e);
+    pauseGame();
+  });
+
+  // Pause modal
+  btnPauseResume.addEventListener('click', function(e) { addRipple(this, e); resumeGame(); });
+  btnPauseRestart.addEventListener('click', function(e) {
+    addRipple(this, e);
+    closeAllModals();
+    startGame(difficulty);
+  });
+  btnPauseDiff.addEventListener('click', function(e) {
+    addRipple(this, e);
+    openDiffModal();           // 일시정지 모달 위에 겹쳐 표시
+  });
+
+  // Difficulty modal
+  btnCloseDiff.addEventListener('click', function() { modalDiff.classList.remove('show'); });
+  btnCancelDiff.addEventListener('click', function() { modalDiff.classList.remove('show'); });
+  btnConfirmDiff.addEventListener('click', function(e) {
+    addRipple(this, e);
+    confirmDiffStart();
+  });
+
+  // Game over modal
+  btnGoRetry.addEventListener('click', function(e) {
+    addRipple(this, e);
+    closeAllModals();
+    startGame(difficulty);
+  });
+  btnGoDiff.addEventListener('click', function(e) {
+    addRipple(this, e);
+    openDiffModal();
+  });
+
+  // Win modal
+  btnWinRetry.addEventListener('click', function(e) {
+    addRipple(this, e);
+    closeAllModals();
+    startGame(difficulty);
+  });
+  btnWinDiff.addEventListener('click', function(e) {
+    addRipple(this, e);
+    openDiffModal();
+  });
+
+  // Rules modal — ✕ 닫기
+  btnCloseRules.addEventListener('click', function() { modalRules.classList.remove('show'); });
+  btnCloseRulesBottom.addEventListener('click', function() { modalRules.classList.remove('show'); });
+
+  // Other games — navigate back to the portal (모달마다)
+  for (let i = 0; i < portalBtns.length; i++) {
+    portalBtns[i].addEventListener('click', function(e) {
+      addRipple(this, e);
+      window.location.href = PORTAL_URL;
+    });
+  }
+
+  // Keyboard — arrows + WASD move, P/Esc pause, Enter confirm
+  document.addEventListener('keydown', function(e) {
+    const key = e.key;
+    if (key === 'ArrowUp' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowRight' ||
+        key === 'w' || key === 'W' || key === 'a' || key === 'A' || key === 's' || key === 'S' || key === 'd' || key === 'D') {
+      e.preventDefault();
+      if (phase === 'playing') {
+        if (key === 'ArrowUp' || key === 'w' || key === 'W') keyState.up = true;
+        else if (key === 'ArrowDown' || key === 's' || key === 'S') keyState.down = true;
+        else if (key === 'ArrowLeft' || key === 'a' || key === 'A') keyState.left = true;
+        else if (key === 'ArrowRight' || key === 'd' || key === 'D') keyState.right = true;
+      }
+      return;
+    }
+    if (key === 'Enter') { handleEnter(); return; }
+    if (key === 'Escape' || key === 'p' || key === 'P') { handlePauseKey(); return; }
+  });
+
+  document.addEventListener('keyup', function(e) {
+    const key = e.key;
+    if (key === 'ArrowUp' || key === 'w' || key === 'W') keyState.up = false;
+    else if (key === 'ArrowDown' || key === 's' || key === 'S') keyState.down = false;
+    else if (key === 'ArrowLeft' || key === 'a' || key === 'A') keyState.left = false;
+    else if (key === 'ArrowRight' || key === 'd' || key === 'D') keyState.right = false;
+  });
+
+  // Pointer — touch/pen follows finger, mouse hovers follow cursor
+  arenaEl.addEventListener('pointerdown', function(e) {
+    if (phase !== 'playing') return;
+    if (e.pointerType === 'mouse') return;
+    try { arenaEl.setPointerCapture(e.pointerId); } catch (err) {}
+    touchActive = true;
+    touchTarget = pointerToArena(e);
+  });
+
+  arenaEl.addEventListener('pointermove', function(e) {
+    if (phase !== 'playing') return;
+    const pt = pointerToArena(e);
+    if (e.pointerType === 'mouse') {
+      mouseTarget = pt;
+      mouseInside = pt.x >= 0 && pt.y >= 0 && pt.x <= arenaW && pt.y <= arenaH;
+    } else if (touchActive) {
+      touchTarget = pt;
+    }
+  });
+
+  arenaEl.addEventListener('pointerup', function(e) {
+    if (e.pointerType === 'mouse') return;
+    touchActive = false;
+    touchTarget = null;
+  });
+
+  arenaEl.addEventListener('pointercancel', function(e) {
+    if (e.pointerType === 'mouse') return;
+    touchActive = false;
+    touchTarget = null;
+  });
+
+  arenaEl.addEventListener('pointerleave', function(e) {
+    if (e.pointerType === 'mouse') mouseInside = false;
+  });
+
+  // Click outside closes rules / difficulty modals
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.modal')) {
+      modalRules.classList.remove('show');
+      modalDiff.classList.remove('show');
+    }
+  });
+
+  // 저장 ② — 탭이 숨겨지면 일시정지 + 저장 + 루프 정지
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden && phase === 'playing') {
+      pauseGame();
+    }
+  });
+
+  // 저장 ③ — 페이지를 떠날 때 (게임이 끝나지 않았다면)
+  window.addEventListener('beforeunload', function() {
+    if (phase === 'playing' || phase === 'paused') saveGame();
+  });
+
+  // 회전/크기 변경 — 필드 좌표 갱신 + 플레이어 경계 재조정
+  window.addEventListener('resize', function() {
+    if (screenGame.classList.contains('show')) {
+      updateArenaMetrics();
+      const minX = PLAYER_R;
+      const minY = PLAYER_R;
+      player.x = clamp(player.x, minX, Math.max(minX, arenaW - PLAYER_R));
+      player.y = clamp(player.y, minY, Math.max(minY, arenaH - PLAYER_R));
+    }
+  });
+  window.addEventListener('orientationchange', function() {
+    setTimeout(function() {
+      if (screenGame.classList.contains('show')) {
+        updateArenaMetrics();
+        const minX = PLAYER_R;
+        const minY = PLAYER_R;
+        player.x = clamp(player.x, minX, Math.max(minX, arenaW - PLAYER_R));
+        player.y = clamp(player.y, minY, Math.max(minY, arenaH - PLAYER_R));
+      }
+    }, 120);
+  });
+}
+
+function confirmDiffStart() {
+  closeAllModals();
+  startGame(activeDiffFromModal());
+}
+
+// ═══════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════
+function formatTime(secs) {
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+}
+
+function formatNumber(n) {
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function addRipple(target, e) {
+  const existing = target.querySelector('.ripple');
+  if (existing) existing.remove();
+  const ripple = document.createElement('div');
+  ripple.className = 'ripple';
+  const rect = target.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  ripple.style.width = ripple.style.height = size + 'px';
+  let x, y;
+  if (e.changedTouches) {
+    x = e.changedTouches[0].clientX - rect.left;
+    y = e.changedTouches[0].clientY - rect.top;
+  } else {
+    x = e.clientX - rect.left;
+    y = e.clientY - rect.top;
+  }
+  ripple.style.left = (x - size / 2) + 'px';
+  ripple.style.top = (y - size / 2) + 'px';
+  target.appendChild(ripple);
+  setTimeout(function() { ripple.remove(); }, 500);
+}
+
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  if (toastTimeout) clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(function() { toastEl.classList.remove('show'); }, 2500);
+}
+
+// ═══════════════════════════════════════════
+// LAUNCH
+// ═══════════════════════════════════════════
+function init() {
+  createBulletPool();
+  renderStartRecords();
+  updateContinueButton();
+  bindEvents();
+  phase = 'idle';
+}
+
+init();
+
+})();
+</script>
+</body>
+</html>
