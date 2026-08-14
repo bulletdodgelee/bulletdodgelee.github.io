@@ -457,27 +457,27 @@ body{
   margin:-7px 0 0 -7px;
   will-change:transform;
 }
+.bullet::after{
+  content:'';
+  position:absolute;
+  top:3px;left:50%;
+  width:4px;height:4px;
+  margin-left:-2px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.85);
+  pointer-events:none;
+}
 .player{
   position:absolute;
   left:0;top:0;
-  width:36px;height:36px;
+  width:18px;height:18px;
   border-radius:50%;
   background:var(--primary);
-  border:3px solid #FFFFFF;
-  box-shadow:0 3px 10px rgba(0,0,0,0.35);
-  margin:-18px 0 0 -18px;
+  border:2px solid #FFFFFF;
+  box-shadow:0 2px 6px rgba(0,0,0,0.35);
+  margin:-9px 0 0 -9px;
   will-change:transform;
   z-index:2;
-}
-.player::after{
-  content:'';
-  position:absolute;
-  top:5px;left:50%;
-  width:7px;height:7px;
-  margin-left:-3.5px;
-  border-radius:50%;
-  background:rgba(255,255,255,0.9);
-  pointer-events:none;
 }
 .player.invulnerable{animation:playerBlink 0.35s ease infinite}
 @keyframes playerBlink{
@@ -869,7 +869,7 @@ button:focus-visible{
       <span class="modal-emoji">🎚️</span>
       <h2>난이도 선택</h2>
     </div>
-    <p>난이도를 골라 다시 시작하세요</p>
+    <p>난이도를 누르면 바로 시작돼요</p>
     <div class="diff-grid" role="group" aria-label="난이도 선택">
       <button class="diff-btn" data-diff="easy" type="button" aria-label="쉬움 난이도"><span class="diff-name">쉬움</span><span class="diff-desc">천천히 떨어지는 총알 · 최대 32발 · 살짝 휘어요</span></button>
       <button class="diff-btn" data-diff="normal" type="button" aria-label="보통 난이도"><span class="diff-name">보통</span><span class="diff-desc">보통 속도의 총알 · 최대 45발 · 휘는 총알</span></button>
@@ -877,7 +877,6 @@ button:focus-visible{
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" id="btnCancelDiff" type="button">취소</button>
-      <button class="btn btn-primary" id="btnConfirmDiff" type="button">시작하기</button>
     </div>
     <button class="btn-portal" type="button">🎮 다른 게임하기</button>
   </div>
@@ -989,11 +988,11 @@ const PORTAL_URL = 'https://appa-games.github.io/';
 const WIN_SECONDS = 90;
 const MAX_LIVES = 3;
 const PLAYER_SPEED = 340;       // px/s (키보드)
-const PLAYER_R = 18;            // 시각 반지름 (36px 원)
-const SPIN_SPEED = 360;         // 어려움: 공 회전 속도 (도/초)
-const HIT_RX = 14;              // 충돌 판정 가로 반지름 (횡축 완화 — 세로보다 좁음)
-const HIT_RY = 16;              // 충돌 판정 세로 반지름 (관대한 히트박스)
+const PLAYER_R = 9;             // 시각 반지름 (18px 원 — 총알보다 살짝 큼)
+const HIT_RX = 5;               // 충돌 판정 가로 반지름 (횡축 완화 — 세로보다 좁음)
+const HIT_RY = 7;               // 충돌 판정 세로 반지름 (관대한 히트박스)
 const BULLET_R = 7;             // 총알 반지름 (14px 원)
+const BULLET_SPIN = 540;        // 어려움: 총알 회전 속도 (도/초)
 const MAX_BULLETS = 60;         // 풀 크기 = 최대 활성 총알 수 (어려움 기준)
 const INVULN_SECONDS = 1.5;
 const RAMP_RATE = 0.02;         // 초당 +2% 난이도 상승
@@ -1045,7 +1044,6 @@ const btnPauseRestart = document.getElementById('btnPauseRestart');
 const btnPauseDiff = document.getElementById('btnPauseDiff');
 const btnCloseDiff = document.getElementById('btnCloseDiff');
 const btnCancelDiff = document.getElementById('btnCancelDiff');
-const btnConfirmDiff = document.getElementById('btnConfirmDiff');
 const btnGoRetry = document.getElementById('btnGoRetry');
 const btnGoDiff = document.getElementById('btnGoDiff');
 const btnWinRetry = document.getElementById('btnWinRetry');
@@ -1080,7 +1078,6 @@ let arenaLeft = 0;
 let arenaTop = 0;
 
 const player = { x: 100, y: 100 };
-let spinAngle = 0;                          // 어려움: 공 회전 각도 (도)
 const keyState = { up: false, down: false, left: false, right: false };
 let touchActive = false;                    // 손가락 드래그 중 여부
 let touchTarget = null;                     // 상대 드래그 목표 좌표 (판 좌표계)
@@ -1238,7 +1235,7 @@ function createBulletPool() {
     el.className = 'bullet';
     el.style.display = 'none';
     bulletLayerEl.appendChild(el);
-    bullets.push({ el: el, active: false, x: 0, y: 0, vx: 0, vy: 0, turn: 0 });
+    bullets.push({ el: el, active: false, x: 0, y: 0, vx: 0, vy: 0, turn: 0, spin: 0 });
   }
 }
 
@@ -1325,6 +1322,7 @@ function spawnBullet() {
   // 유도탄: 조준 총알은 난이도별 최대 휘는 속도, 대각/옆 총알은 절반, 직낙은 직선
   b.turn = type === 'aim' ? cfg.turnRate :
            (type === 'diagonal' || type === 'side') ? cfg.turnRate * 0.5 : 0;
+  b.spin = Math.random() * 360;   // 회전 시작 각도 (어려움: 총알 회전용)
 
   b.active = true;
   activeCount++;
@@ -1437,9 +1435,6 @@ function update(dt) {
     }
   }
 
-  // 어려움: 공이 돌며 움직임
-  if (difficulty === 'hard') spinAngle = (spinAngle + SPIN_SPEED * dt) % 360;
-
   // 난이도 상승 램프 + 발사
   const cfg = DIFFICULTY_CONFIG[difficulty];
   spawnTimer += dt * 1000;
@@ -1464,13 +1459,13 @@ function update(dt) {
 
 function renderFrame() {
   // 상태를 먼저 갱신한 뒤, 트랜스폼 일괄 기록 (루프 내 레이아웃 읽기 없음)
-  playerEl.style.transform = 'translate3d(' + (player.x - PLAYER_R) + 'px,' + (player.y - PLAYER_R) + 'px,0)' +
-    (difficulty === 'hard' ? ' rotate(' + spinAngle + 'deg)' : '');
+  playerEl.style.transform = 'translate3d(' + (player.x - PLAYER_R) + 'px,' + (player.y - PLAYER_R) + 'px,0)';
   for (let i = 0; i < MAX_BULLETS; i++) {
     const b = bullets[i];
     if (b.active) {
       b.el.style.display = 'block';
-      b.el.style.transform = 'translate3d(' + b.x + 'px,' + b.y + 'px,0)';
+      b.el.style.transform = 'translate3d(' + b.x + 'px,' + b.y + 'px,0)' +
+        (difficulty === 'hard' ? ' rotate(' + ((elapsed * BULLET_SPIN + b.spin) % 360) + 'deg)' : '');
     } else {
       b.el.style.display = 'none';
     }
@@ -1620,7 +1615,6 @@ function startGame(diff) {
   elapsed = 0;
   lastSec = -1;
   invuln = 0;
-  spinAngle = 0;
   phase = 'playing';
   createdAt = Date.now();
   spawnTimer = DIFFICULTY_CONFIG[diff].spawnStart;
@@ -1642,7 +1636,6 @@ function resumeFromSave(save) {
   elapsed = save.elapsed;
   lastSec = Math.floor(elapsed);
   invuln = 0;
-  spinAngle = 0;
   phase = 'playing';
   createdAt = save.createdAt || Date.now();
   spawnTimer = DIFFICULTY_CONFIG[difficulty].spawnStart;
@@ -1715,16 +1708,11 @@ function shakeArena() {
 }
 
 function bindEvents() {
-  // 시작 화면 난이도 버튼 — 바로 시작
+  // 난이도 버튼(시작 화면/난이도 모달) — 누르면 바로 시작
   for (let i = 0; i < diffBtns.length; i++) {
     diffBtns[i].addEventListener('click', function(e) {
       addRipple(this, e);
-      if (this.closest('#screenStart')) {
-        startGame(this.dataset.diff);
-      } else {
-        for (let j = 0; j < diffBtns.length; j++) diffBtns[j].classList.remove('active');
-        this.classList.add('active');
-      }
+      startGame(this.dataset.diff);
     });
   }
 
@@ -1760,10 +1748,6 @@ function bindEvents() {
   // Difficulty modal
   btnCloseDiff.addEventListener('click', function() { closeDiffReturn(); });
   btnCancelDiff.addEventListener('click', function() { closeDiffReturn(); });
-  btnConfirmDiff.addEventListener('click', function(e) {
-    addRipple(this, e);
-    confirmDiffStart();
-  });
 
   // Game over modal
   btnGoRetry.addEventListener('click', function(e) {
