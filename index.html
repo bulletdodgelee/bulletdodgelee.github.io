@@ -179,7 +179,7 @@ body{
   padding-bottom:max(var(--space-4),env(safe-area-inset-bottom));
 }
 .screen.show{display:flex}
-.screen-game{overflow:hidden;padding-bottom:0}
+.screen-game{overflow:hidden;padding-bottom:0;touch-action:none}
 
 /* ═══════════════════════════════════════
    START SCREEN — hero, big buttons
@@ -825,7 +825,7 @@ button:focus-visible{
       <button class="hud-pause" id="btnPause" type="button" aria-label="일시정지">⏸️</button>
     </div>
 
-    <div class="arena" id="arena" aria-label="게임 필드. 방향키나 마우스, 손가락으로 캐릭터를 움직이세요">
+    <div class="arena" id="arena" aria-label="게임 필드. 방향키나 마우스, 손가락으로 캐릭터를 움직이세요. 손가락은 화면 아무 곳에서 끌 수 있어요">
       <div class="bullet-layer" id="bulletLayer" aria-hidden="true"></div>
       <div class="player" id="player" aria-hidden="true"></div>
     </div>
@@ -940,7 +940,7 @@ button:focus-visible{
       </div>
       <div class="rule-section">
         <h3>👆 휴대폰 · 손가락</h3>
-        <p>게임 화면을 손가락으로 누른 채 움직이면 캐릭터가 손가락을 따라와요. 손가락 위치가 캐릭터의 중심이 돼요.</p>
+        <p>화면 아무 곳이나 손가락으로 누른 채 끌면 캐릭터가 같이 움직여요. 손가락을 멈추면 캐릭터도 멈춰요. 판 밖을 눌러도 돼요.</p>
       </div>
       <div class="rule-section">
         <h3>❤️ 목숨과 무적</h3>
@@ -976,7 +976,6 @@ const WIN_SECONDS = 90;
 const MAX_LIVES = 3;
 const PLAYER_SPEED = 340;       // px/s (키보드)
 const PLAYER_R = 22;            // 시각 반지름 (44px 원)
-const TOUCH_OFFSET_Y = 40;      // 터치 드래그: 손가락에 가려지지 않도록 위로 오프셋
 const HIT_R = 19;               // 충돌 판정 반지름 (관대한 히트박스)
 const BULLET_R = 7;             // 총알 반지름 (14px 원)
 const COLLIDE_R2 = (HIT_R + BULLET_R) * (HIT_R + BULLET_R);
@@ -1067,8 +1066,11 @@ let arenaTop = 0;
 
 const player = { x: 100, y: 100 };
 const keyState = { up: false, down: false, left: false, right: false };
-let touchActive = false;
-let touchTarget = null;
+let touchActive = false;                    // 손가락 드래그 중 여부
+let touchTarget = null;                     // 상대 드래그 목표 좌표 (판 좌표계)
+let dragPointerId = null;                   // 활성 드래그 포인터 (멀티터치 방지)
+const dragAnchor = { x: 0, y: 0 };          // 드래그 시작 지점 (화면 좌표)
+const dragStartPlayer = { x: 0, y: 0 };     // 드래그 시작 시 플레이어 위치
 let mouseInside = false;
 let mouseTarget = null;
 
@@ -1349,9 +1351,9 @@ function updatePlayer(dt) {
     player.x += dx * PLAYER_SPEED * dt;
     player.y += dy * PLAYER_SPEED * dt;
   } else if (touchActive && touchTarget) {
-    const t = 1 - Math.exp(-14 * dt);
-    player.x += (touchTarget.x - player.x) * t;
-    player.y += (touchTarget.y - player.y) * t;
+    // 상대 드래그: 손가락이 움직인 만큼만 1:1로 반영 (터치 위치로 이동하지 않음)
+    player.x = touchTarget.x;
+    player.y = touchTarget.y;
   } else if (mouseInside && mouseTarget) {
     const t = 1 - Math.exp(-10 * dt);
     player.x += (mouseTarget.x - player.x) * t;
@@ -1544,10 +1546,21 @@ function closeAllModals() {
 }
 
 function openDiffModal() {
+  // 난이도 선택 모달이 항상 맨 위에 오도록, 겹칠 수 있는 모달을 먼저 닫음
+  // (modalGameOver/modalWin은 DOM상 modalDiff보다 뒤에 있어 같은 z-index면 가려짐)
+  modalGameOver.classList.remove('show');
+  modalWin.classList.remove('show');
   for (let i = 0; i < diffBtns.length; i++) {
     diffBtns[i].classList.toggle('active', diffBtns[i].dataset.diff === difficulty);
   }
   modalDiff.classList.add('show');
+}
+
+// 난이도 모달 닫기 — 게임오버/클리어에서 열었다면 원래 모달로 복귀
+function closeDiffReturn() {
+  modalDiff.classList.remove('show');
+  if (phase === 'over') modalGameOver.classList.add('show');
+  else if (phase === 'won') modalWin.classList.add('show');
 }
 
 function activeDiffFromModal() {
@@ -1624,15 +1637,9 @@ function pointerToArena(e) {
   return { x: e.clientX - arenaLeft, y: e.clientY - arenaTop };
 }
 
-function touchPointToArena(e) {
-  const pt = pointerToArena(e);
-  pt.y -= TOUCH_OFFSET_Y;
-  return pt;
-}
-
 function handlePauseKey() {
   if (modalRules.classList.contains('show')) { modalRules.classList.remove('show'); return; }
-  if (modalDiff.classList.contains('show')) { modalDiff.classList.remove('show'); return; }
+  if (modalDiff.classList.contains('show')) { closeDiffReturn(); return; }
   if (phase === 'playing') { pauseGame(); return; }
   if (phase === 'paused') { resumeGame(); return; }
 }
@@ -1706,8 +1713,8 @@ function bindEvents() {
   });
 
   // Difficulty modal
-  btnCloseDiff.addEventListener('click', function() { modalDiff.classList.remove('show'); });
-  btnCancelDiff.addEventListener('click', function() { modalDiff.classList.remove('show'); });
+  btnCloseDiff.addEventListener('click', function() { closeDiffReturn(); });
+  btnCancelDiff.addEventListener('click', function() { closeDiffReturn(); });
   btnConfirmDiff.addEventListener('click', function(e) {
     addRipple(this, e);
     confirmDiffStart();
@@ -1773,47 +1780,58 @@ function bindEvents() {
     else if (key === 'ArrowRight' || key === 'd' || key === 'D') keyState.right = false;
   });
 
-  // Pointer — touch/pen follows finger, mouse hovers follow cursor
-  arenaEl.addEventListener('pointerdown', function(e) {
-    if (phase !== 'playing') return;
-    if (e.pointerType === 'mouse') return;
-    try { arenaEl.setPointerCapture(e.pointerId); } catch (err) {}
-    touchActive = true;
-    touchTarget = touchPointToArena(e);
-  });
-
+  // Mouse — 호버 시 커서 따라가기 (판 안에서만)
   arenaEl.addEventListener('pointermove', function(e) {
     if (phase !== 'playing') return;
-    if (e.pointerType === 'mouse') {
-      const pt = pointerToArena(e);
-      mouseTarget = pt;
-      mouseInside = pt.x >= 0 && pt.y >= 0 && pt.x <= arenaW && pt.y <= arenaH;
-    } else if (touchActive) {
-      touchTarget = touchPointToArena(e);
-    }
-  });
-
-  arenaEl.addEventListener('pointerup', function(e) {
-    if (e.pointerType === 'mouse') return;
-    touchActive = false;
-    touchTarget = null;
-  });
-
-  arenaEl.addEventListener('pointercancel', function(e) {
-    if (e.pointerType === 'mouse') return;
-    touchActive = false;
-    touchTarget = null;
+    if (e.pointerType !== 'mouse') return;
+    const pt = pointerToArena(e);
+    mouseTarget = pt;
+    mouseInside = pt.x >= 0 && pt.y >= 0 && pt.x <= arenaW && pt.y <= arenaH;
   });
 
   arenaEl.addEventListener('pointerleave', function(e) {
     if (e.pointerType === 'mouse') mouseInside = false;
   });
 
+  // Touch/pen — 상대 드래그: 화면 어디를 눌러도 동작, 움직인 만큼만 공에 반영
+  document.addEventListener('pointerdown', function(e) {
+    if (phase !== 'playing') return;
+    if (e.pointerType === 'mouse') return;
+    if (touchActive) return;                    // 멀티터치: 첫 손가락만 인식
+    if (e.target.closest('button')) return;     // 일시정지 등 버튼은 드래그 시작 안 함
+    touchActive = true;
+    dragPointerId = e.pointerId;
+    dragAnchor.x = e.clientX;
+    dragAnchor.y = e.clientY;
+    dragStartPlayer.x = player.x;
+    dragStartPlayer.y = player.y;
+    touchTarget = { x: player.x, y: player.y };
+  });
+
+  document.addEventListener('pointermove', function(e) {
+    if (!touchActive || e.pointerId !== dragPointerId) return;
+    if (phase !== 'playing') { touchActive = false; touchTarget = null; return; }
+    // 화면 CSS px = 판 px(1:1) → 델타를 그대로 판 좌표에 적용
+    touchTarget = {
+      x: dragStartPlayer.x + (e.clientX - dragAnchor.x),
+      y: dragStartPlayer.y + (e.clientY - dragAnchor.y)
+    };
+  });
+
+  function endDrag(e) {
+    if (!touchActive || e.pointerId !== dragPointerId) return;
+    touchActive = false;
+    touchTarget = null;
+    dragPointerId = null;
+  }
+  document.addEventListener('pointerup', endDrag);
+  document.addEventListener('pointercancel', endDrag);
+
   // Click outside closes rules / difficulty modals
   document.addEventListener('click', function(e) {
     if (!e.target.closest('.modal')) {
       modalRules.classList.remove('show');
-      modalDiff.classList.remove('show');
+      closeDiffReturn();
     }
   });
 
