@@ -460,14 +460,24 @@ body{
 .player{
   position:absolute;
   left:0;top:0;
-  width:44px;height:44px;
+  width:36px;height:36px;
   border-radius:50%;
   background:var(--primary);
   border:3px solid #FFFFFF;
   box-shadow:0 3px 10px rgba(0,0,0,0.35);
-  margin:-22px 0 0 -22px;
+  margin:-18px 0 0 -18px;
   will-change:transform;
   z-index:2;
+}
+.player::after{
+  content:'';
+  position:absolute;
+  top:5px;left:50%;
+  width:7px;height:7px;
+  margin-left:-3.5px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.9);
+  pointer-events:none;
 }
 .player.invulnerable{animation:playerBlink 0.35s ease infinite}
 @keyframes playerBlink{
@@ -785,15 +795,15 @@ button:focus-visible{
     <div class="diff-grid" role="group" aria-label="난이도 선택">
       <button class="diff-btn" data-diff="easy" type="button" aria-label="쉬움 난이도로 시작">
         <span class="diff-name">쉬움</span>
-        <span class="diff-desc">천천히 떨어지는 총알 · 최대 32발</span>
+        <span class="diff-desc">천천히 떨어지는 총알 · 최대 32발 · 살짝 휘어요</span>
       </button>
       <button class="diff-btn" data-diff="normal" type="button" aria-label="보통 난이도로 시작">
         <span class="diff-name">보통</span>
-        <span class="diff-desc">보통 속도의 총알 · 최대 45발</span>
+        <span class="diff-desc">보통 속도의 총알 · 최대 45발 · 휘는 총알</span>
       </button>
       <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도로 시작">
         <span class="diff-name">어려움</span>
-        <span class="diff-desc">빠르고 많은 총알 · 최대 60발</span>
+        <span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄</span>
       </button>
     </div>
 
@@ -861,9 +871,9 @@ button:focus-visible{
     </div>
     <p>난이도를 골라 다시 시작하세요</p>
     <div class="diff-grid" role="group" aria-label="난이도 선택">
-      <button class="diff-btn" data-diff="easy" type="button" aria-label="쉬움 난이도"><span class="diff-name">쉬움</span><span class="diff-desc">천천히 떨어지는 총알 · 최대 32발</span></button>
-      <button class="diff-btn" data-diff="normal" type="button" aria-label="보통 난이도"><span class="diff-name">보통</span><span class="diff-desc">보통 속도의 총알 · 최대 45발</span></button>
-      <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도"><span class="diff-name">어려움</span><span class="diff-desc">빠르고 많은 총알 · 최대 60발</span></button>
+      <button class="diff-btn" data-diff="easy" type="button" aria-label="쉬움 난이도"><span class="diff-name">쉬움</span><span class="diff-desc">천천히 떨어지는 총알 · 최대 32발 · 살짝 휘어요</span></button>
+      <button class="diff-btn" data-diff="normal" type="button" aria-label="보통 난이도"><span class="diff-name">보통</span><span class="diff-desc">보통 속도의 총알 · 최대 45발 · 휘는 총알</span></button>
+      <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도"><span class="diff-name">어려움</span><span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄</span></button>
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" id="btnCancelDiff" type="button">취소</button>
@@ -931,6 +941,10 @@ button:focus-visible{
         <p>떨어지는 총알을 피해서 <b>90초</b>를 버티면 클리어예요. 목숨은 3개! 총알에 맞으면 목숨이 1개 줄어요.</p>
       </div>
       <div class="rule-section">
+        <h3>🌀 유도탄</h3>
+        <p>일부 총알은 캐릭터를 향해 휘어져요. 난이도가 높을수록 더 세게 휘어지니 주의하세요.</p>
+      </div>
+      <div class="rule-section">
         <h3>⌨️ 컴퓨터 · 키보드</h3>
         <p>방향키(↑↓←→)나 <b>W·A·S·D</b> 키로 캐릭터를 움직여요. <b>P</b>나 <b>Esc</b> 키를 누르면 잠시 멈출 수 있어요.</p>
       </div>
@@ -975,19 +989,20 @@ const PORTAL_URL = 'https://appa-games.github.io/';
 const WIN_SECONDS = 90;
 const MAX_LIVES = 3;
 const PLAYER_SPEED = 340;       // px/s (키보드)
-const PLAYER_R = 22;            // 시각 반지름 (44px 원)
-const HIT_R = 19;               // 충돌 판정 반지름 (관대한 히트박스)
+const PLAYER_R = 18;            // 시각 반지름 (36px 원)
+const SPIN_SPEED = 360;         // 어려움: 공 회전 속도 (도/초)
+const HIT_RX = 14;              // 충돌 판정 가로 반지름 (횡축 완화 — 세로보다 좁음)
+const HIT_RY = 16;              // 충돌 판정 세로 반지름 (관대한 히트박스)
 const BULLET_R = 7;             // 총알 반지름 (14px 원)
-const COLLIDE_R2 = (HIT_R + BULLET_R) * (HIT_R + BULLET_R);
 const MAX_BULLETS = 60;         // 풀 크기 = 최대 활성 총알 수 (어려움 기준)
 const INVULN_SECONDS = 1.5;
 const RAMP_RATE = 0.02;         // 초당 +2% 난이도 상승
 const MAX_RAMP = 2.5;           // 상승 한도 (2.5배)
 
 const DIFFICULTY_CONFIG = {
-  easy:   { label: '쉬움',   bulletSpeed: 110, spawnStart: 1100, spawnMin: 500,  maxBullets: 32, volley: [1, 1],   aimChance: 0.30, sideChance: 0 },
-  normal: { label: '보통',   bulletSpeed: 150, spawnStart: 900,  spawnMin: 400,  maxBullets: 45, volley: [1, 2],   aimChance: 0.50, sideChance: 0 },
-  hard:   { label: '어려움', bulletSpeed: 190, spawnStart: 700,  spawnMin: 280,  maxBullets: 60, volley: [1, 3],   aimChance: 0.65, sideChance: 0.15 }
+  easy:   { label: '쉬움',   bulletSpeed: 110, spawnStart: 1100, spawnMin: 500,  maxBullets: 32, volley: [1, 1],   aimChance: 0.30, sideChance: 0,      turnRate: 0.5,  speedVar: 0.15 },
+  normal: { label: '보통',   bulletSpeed: 150, spawnStart: 900,  spawnMin: 400,  maxBullets: 45, volley: [1, 2],   aimChance: 0.50, sideChance: 0,      turnRate: 1.0,  speedVar: 0.25 },
+  hard:   { label: '어려움', bulletSpeed: 190, spawnStart: 700,  spawnMin: 280,  maxBullets: 60, volley: [1, 3],   aimChance: 0.65, sideChance: 0.15, turnRate: 1.8,  speedVar: 0.40 }
 };
 
 // ═══════════════════════════════════════════
@@ -1065,6 +1080,7 @@ let arenaLeft = 0;
 let arenaTop = 0;
 
 const player = { x: 100, y: 100 };
+let spinAngle = 0;                          // 어려움: 공 회전 각도 (도)
 const keyState = { up: false, down: false, left: false, right: false };
 let touchActive = false;                    // 손가락 드래그 중 여부
 let touchTarget = null;                     // 상대 드래그 목표 좌표 (판 좌표계)
@@ -1222,7 +1238,7 @@ function createBulletPool() {
     el.className = 'bullet';
     el.style.display = 'none';
     bulletLayerEl.appendChild(el);
-    bullets.push({ el: el, active: false, x: 0, y: 0, vx: 0, vy: 0 });
+    bullets.push({ el: el, active: false, x: 0, y: 0, vx: 0, vy: 0, turn: 0 });
   }
 }
 
@@ -1258,7 +1274,8 @@ function spawnBullet() {
   }
   if (idx < 0) return;
 
-  const speed = cfg.bulletSpeed * currentRamp();
+  // 속도 랜덤: 난이도가 높을수록 변동 폭이 큼 (예: 어려움 ±40%)
+  const speed = cfg.bulletSpeed * currentRamp() * (1 + (Math.random() * 2 - 1) * cfg.speedVar);
   const b = bullets[idx];
   const W = arenaW;
   const H = arenaH;
@@ -1305,6 +1322,10 @@ function spawnBullet() {
     b.vy = (Math.random() - 0.5) * speed * 0.4;
   }
 
+  // 유도탄: 조준 총알은 난이도별 최대 휘는 속도, 대각/옆 총알은 절반, 직낙은 직선
+  b.turn = type === 'aim' ? cfg.turnRate :
+           (type === 'diagonal' || type === 'side') ? cfg.turnRate * 0.5 : 0;
+
   b.active = true;
   activeCount++;
 }
@@ -1315,15 +1336,33 @@ function updateBullets(dt) {
     if (!b.active) continue;
     b.x += b.vx * dt;
     b.y += b.vy * dt;
+
+    // 유도탄: 속도 유지한 채 제한된 각속도로 플레이어를 향해 선회
+    if (b.turn > 0) {
+      const speed = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+      if (speed > 0) {
+        const cur = Math.atan2(b.vy, b.vx);
+        let diff = Math.atan2(player.y - b.y, player.x - b.x) - cur;
+        while (diff > Math.PI) diff -= 2 * Math.PI;
+        while (diff < -Math.PI) diff += 2 * Math.PI;
+        const maxTurn = b.turn * dt;
+        const turn = Math.abs(diff) > maxTurn ? (diff > 0 ? maxTurn : -maxTurn) : diff;
+        const a = cur + turn;
+        b.vx = Math.cos(a) * speed;
+        b.vy = Math.sin(a) * speed;
+      }
+    }
+
     if (b.y > arenaH + 40 || b.y < -40 || b.x < -40 || b.x > arenaW + 40) {
       b.active = false;
       activeCount--;
       continue;
     }
     if (invuln <= 0) {
-      const dx = b.x - player.x;
-      const dy = b.y - player.y;
-      if (dx * dx + dy * dy < COLLIDE_R2) {
+      // 타원 히트박스: (dx/rx)² + (dy/ry)² < 1 — 가로 판정이 세로보다 좁아 좌우 회피가 관대함
+      const dx = (b.x - player.x) / (HIT_RX + BULLET_R);
+      const dy = (b.y - player.y) / (HIT_RY + BULLET_R);
+      if (dx * dx + dy * dy < 1) {
         hitPlayer(b);
         if (phase !== 'playing') return;
       }
@@ -1398,6 +1437,9 @@ function update(dt) {
     }
   }
 
+  // 어려움: 공이 돌며 움직임
+  if (difficulty === 'hard') spinAngle = (spinAngle + SPIN_SPEED * dt) % 360;
+
   // 난이도 상승 램프 + 발사
   const cfg = DIFFICULTY_CONFIG[difficulty];
   spawnTimer += dt * 1000;
@@ -1422,7 +1464,8 @@ function update(dt) {
 
 function renderFrame() {
   // 상태를 먼저 갱신한 뒤, 트랜스폼 일괄 기록 (루프 내 레이아웃 읽기 없음)
-  playerEl.style.transform = 'translate3d(' + (player.x - PLAYER_R) + 'px,' + (player.y - PLAYER_R) + 'px,0)';
+  playerEl.style.transform = 'translate3d(' + (player.x - PLAYER_R) + 'px,' + (player.y - PLAYER_R) + 'px,0)' +
+    (difficulty === 'hard' ? ' rotate(' + spinAngle + 'deg)' : '');
   for (let i = 0; i < MAX_BULLETS; i++) {
     const b = bullets[i];
     if (b.active) {
@@ -1577,6 +1620,7 @@ function startGame(diff) {
   elapsed = 0;
   lastSec = -1;
   invuln = 0;
+  spinAngle = 0;
   phase = 'playing';
   createdAt = Date.now();
   spawnTimer = DIFFICULTY_CONFIG[diff].spawnStart;
@@ -1598,6 +1642,7 @@ function resumeFromSave(save) {
   elapsed = save.elapsed;
   lastSec = Math.floor(elapsed);
   invuln = 0;
+  spinAngle = 0;
   phase = 'playing';
   createdAt = save.createdAt || Date.now();
   spawnTimer = DIFFICULTY_CONFIG[difficulty].spawnStart;
