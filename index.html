@@ -976,6 +976,7 @@ const WIN_SECONDS = 90;
 const MAX_LIVES = 3;
 const PLAYER_SPEED = 340;       // px/s (키보드)
 const PLAYER_R = 22;            // 시각 반지름 (44px 원)
+const TOUCH_OFFSET_Y = 40;      // 터치 드래그: 손가락에 가려지지 않도록 위로 오프셋
 const HIT_R = 19;               // 충돌 판정 반지름 (관대한 히트박스)
 const BULLET_R = 7;             // 총알 반지름 (14px 원)
 const COLLIDE_R2 = (HIT_R + BULLET_R) * (HIT_R + BULLET_R);
@@ -1623,6 +1624,12 @@ function pointerToArena(e) {
   return { x: e.clientX - arenaLeft, y: e.clientY - arenaTop };
 }
 
+function touchPointToArena(e) {
+  const pt = pointerToArena(e);
+  pt.y -= TOUCH_OFFSET_Y;
+  return pt;
+}
+
 function handlePauseKey() {
   if (modalRules.classList.contains('show')) { modalRules.classList.remove('show'); return; }
   if (modalDiff.classList.contains('show')) { modalDiff.classList.remove('show'); return; }
@@ -1772,17 +1779,17 @@ function bindEvents() {
     if (e.pointerType === 'mouse') return;
     try { arenaEl.setPointerCapture(e.pointerId); } catch (err) {}
     touchActive = true;
-    touchTarget = pointerToArena(e);
+    touchTarget = touchPointToArena(e);
   });
 
   arenaEl.addEventListener('pointermove', function(e) {
     if (phase !== 'playing') return;
-    const pt = pointerToArena(e);
     if (e.pointerType === 'mouse') {
+      const pt = pointerToArena(e);
       mouseTarget = pt;
       mouseInside = pt.x >= 0 && pt.y >= 0 && pt.x <= arenaW && pt.y <= arenaH;
     } else if (touchActive) {
-      touchTarget = pt;
+      touchTarget = touchPointToArena(e);
     }
   });
 
