@@ -1170,24 +1170,25 @@ const PLAYER_R = 9;             // 시각 반지름 (18px 원 — 총알보다 �
 const HIT_RX = 5;               // 충돌 판정 가로 반지름 (횡축 완화 — 세로보다 좁음)
 const HIT_RY = 7;               // 충돌 판정 세로 반지름 (관대한 히트박스)
 const BULLET_R = 7;             // 총알 반지름 (14px 원)
-const NUKE_FIRST = 6;           // 어려움: 첫 핵까지 (초)
 const NUKE_MIN = 10;            // 어려움: 이후 최소 핵 간격 (초)
 const NUKE_MAX = 20;            // 어려움: 이후 최대 핵 간격 (초)
 const NUKE_WARN = 3;            // 핵 카운트다운 (초)
 const NUKE_RADIUS = 85;         // 핵 폭발 반경 (px)
 let nuke = null;                // 핵 상태 { x, y, timer, state: 'warn'|'blast' }
-let nukeTimer = NUKE_FIRST;     // 다음 핵까지 남은 시간 (초)
+const RAMP_RATE = 0.02;         // 초당 +2% 난이도 상승
+const MAX_RAMP = 2.5;           // 상승 한도 (2.5배)
+let elapsed = 0;                // 초 단위 (점수 = 생존 시간, 램프 계산 기준)
+
+let nukeTimer = eventDelay(NUKE_MIN, NUKE_MAX); // 다음 핵까지 남은 시간 (초)
 let nukeWarnEl = null;
 let nukeCountEl = null;
 let nukeBlastEl = null;
 let nukeFallEl = null;           // 하늘에서 떨어지는 핵 미사일 요소
-const ITEM_FIRST = 12;          // 첫 아이템까지 (초) — 모든 난이도 공통, 낮은 빈도
-const ITEM_MIN = 12;            // 이후 최소 간격 (초)
-const ITEM_MAX = 24;            // 이후 최대 간격 (초)
+const ITEM_MIN = 12;           // 이후 최소 간격 (초)
+const ITEM_MAX = 24;           // 이후 최대 간격 (초)
 const ITEM_SPEED = 90;          // 아이템 낙하 속도 (px/s)
 const ITEM_CATCH_R = 34;        // 아이템 획득 판정 반경 (px)
 const SHIELD_SECONDS = 5;       // 쉴드 무적 시간 (초)
-const CARRIER_FIRST = 15;        // 어려움: 첫 B200까지 (초)
 const CARRIER_MIN = 15;          // 이후 최소 간격 (초)
 const CARRIER_MAX = 25;          // 이후 최대 간격 (초)
 const CARRIER_WARN = 2.5;        // 레이저 경로 예고 시간 (초)
@@ -1196,7 +1197,6 @@ const CARRIER_Y_MIN = 40;        // 비행 레인 y 최소
 const CARRIER_Y_MAX = 240;       // 비행 레인 y 최대
 const BLAST_INTERVAL = 0.35;     // 카펫 폭발 간격 (초)
 const BLAST_R = 48;              // 경로 폭발 반경 (px)
-const SAMURAI_FIRST = 20;        // 어려움: 첫 사무라이까지 (초)
 const SAMURAI_MIN = 18;          // 이후 최소 간격 (초)
 const SAMURAI_MAX = 30;          // 이후 최대 간격 (초)
 const SAMURAI_WARN = 2.0;        // 준비자세 시간 (초)
@@ -1206,16 +1206,14 @@ const SLASH_SPEED = 720;         // 발도 검기 속도 (px/s) — B200보다 �
 const SLASH_R = 16;              // 검기 판정 반경 (px)
 const SLASH_CUT = 18;            // 검기에 베이는 총알 밴드 (레인 중심 ±px)
 let item = null;                // 아이템 { x, y, vy, type: 'shield'|'life', el }
-let itemTimer = ITEM_FIRST;     // 다음 아이템까지 남은 시간 (초)
+let itemTimer = eventDelay(ITEM_MIN, ITEM_MAX); // 다음 아이템까지 남은 시간 (초)
 let carrier = null;             // B200 { x, y, dir, state: 'warn'|'fly', timer, blastTimer, el, laserEl }
-let carrierTimer = CARRIER_FIRST;
+let carrierTimer = eventDelay(CARRIER_MIN, CARRIER_MAX);
 let b200Blasts = [];            // 경로 폭발 요소 추적 (리셋 시 정리용)
 let samurai = null;             // 사무라이 { x, y, dir, state: 'stance'|'slash', timer, el, lineEl, waveEl }
-let samuraiTimer = SAMURAI_FIRST;
+let samuraiTimer = eventDelay(SAMURAI_MIN, SAMURAI_MAX);
 const MAX_BULLETS = 60;         // 풀 크기 = 최대 활성 총알 수 (어려움 기준)
 const INVULN_SECONDS = 1.5;
-const RAMP_RATE = 0.02;         // 초당 +2% 난이도 상승
-const MAX_RAMP = 2.5;           // 상승 한도 (2.5배)
 
 const DIFFICULTY_CONFIG = {
   easy:   { label: '쉬움',   bulletSpeed: 110, spawnStart: 1100, spawnMin: 500,  maxBullets: 32, volley: [1, 1],   aimChance: 0.30, sideChance: 0,      turnRate: 0.5,  speedVar: 0.15, orbitRadius: 16, orbitSpeed: 1.4 },
@@ -1280,7 +1278,6 @@ const toastEl = document.getElementById('toast');
 let phase = 'idle';              // idle | playing | paused | over | won
 let difficulty = 'easy';
 let lives = MAX_LIVES;
-let elapsed = 0;                 // 초 단위 (점수 = 생존 시간)
 let lastSec = -1;
 let createdAt = Date.now();
 let invuln = 0;
@@ -1473,6 +1470,11 @@ function currentRamp() {
   return Math.min(MAX_RAMP, 1 + RAMP_RATE * elapsed);
 }
 
+// 이벤트 간격: 난이도 램프에 비례해 시간이 지날수록 짧아짐 (총알 램프와 동일한 1/ramp 방식)
+function eventDelay(min, max) {
+  return (min + Math.random() * (max - min)) / currentRamp();
+}
+
 function randomInt(min, max) {
   return min + Math.floor(Math.random() * (max - min + 1));
 }
@@ -1604,7 +1606,7 @@ function updateBullets(dt) {
 // ═══════════════════════════════════════════
 function resetNukes() {
   nuke = null;
-  nukeTimer = NUKE_FIRST;
+  nukeTimer = eventDelay(NUKE_MIN, NUKE_MAX);
   if (nukeWarnEl) { nukeWarnEl.remove(); nukeWarnEl = null; }
   if (nukeBlastEl) { nukeBlastEl.remove(); nukeBlastEl = null; }
   if (nukeFallEl) { nukeFallEl.remove(); nukeFallEl = null; }
@@ -1699,7 +1701,7 @@ function clearNuke() {
 // ═══════════════════════════════════════════
 function resetItems() {
   if (item) { item.el.remove(); item = null; }
-  itemTimer = ITEM_FIRST;
+  itemTimer = eventDelay(ITEM_MIN, ITEM_MAX);
 }
 
 function spawnItem() {
@@ -1758,7 +1760,7 @@ function resetCarrier() {
     if (bl.el) bl.el.remove();
   }
   b200Blasts = [];
-  carrierTimer = CARRIER_FIRST;
+  carrierTimer = eventDelay(CARRIER_MIN, CARRIER_MAX);
 }
 
 function clearCarrier() {
@@ -1848,7 +1850,7 @@ function resetSamurai() {
     if (samurai.waveEl) samurai.waveEl.remove();
     samurai = null;
   }
-  samuraiTimer = SAMURAI_FIRST;
+  samuraiTimer = eventDelay(SAMURAI_MIN, SAMURAI_MAX);
 }
 
 function clearSamurai() {
@@ -2059,7 +2061,7 @@ function update(dt) {
       nukeTimer -= dt;
       if (nukeTimer <= 0) {
         spawnNuke();
-        nukeTimer = NUKE_MIN + Math.random() * (NUKE_MAX - NUKE_MIN);
+        nukeTimer = eventDelay(NUKE_MIN, NUKE_MAX);
       }
     } else if (nuke.state === 'warn') {
       nuke.timer -= dt;
@@ -2082,7 +2084,7 @@ function update(dt) {
       carrierTimer -= dt;
       if (carrierTimer <= 0) {
         spawnCarrier();
-        carrierTimer = CARRIER_MIN + Math.random() * (CARRIER_MAX - CARRIER_MIN);
+        carrierTimer = eventDelay(CARRIER_MIN, CARRIER_MAX);
       }
     } else if (carrier.state === 'warn') {
       carrier.timer -= dt;
@@ -2107,7 +2109,7 @@ function update(dt) {
       samuraiTimer -= dt;
       if (samuraiTimer <= 0) {
         spawnSamurai();
-        samuraiTimer = SAMURAI_MIN + Math.random() * (SAMURAI_MAX - SAMURAI_MIN);
+        samuraiTimer = eventDelay(SAMURAI_MIN, SAMURAI_MAX);
       }
     } else {
       updateSamurai(dt);
@@ -2119,7 +2121,7 @@ function update(dt) {
     itemTimer -= dt;
     if (itemTimer <= 0) {
       spawnItem();
-      itemTimer = ITEM_MIN + Math.random() * (ITEM_MAX - ITEM_MIN);
+        itemTimer = eventDelay(ITEM_MIN, ITEM_MAX);
     }
   } else {
     item.y += item.vy * dt;
