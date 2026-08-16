@@ -578,6 +578,56 @@ body{
   z-index:3;
 }
 .b200-blast.boom{animation:nukeBoom .7s ease-out forwards}
+/* 사무라이 (어려움 전용) — 뜬금없이 등장, 준비자세 후 일자 발도 (벽력일섬) */
+.samurai{
+  position:absolute;
+  left:0;top:0;
+  width:90px;height:64px;
+  pointer-events:none;
+  z-index:5;
+  transition:opacity .35s ease;
+}
+.samurai svg{display:block;width:100%;height:100%}
+.samurai-left{transform:scaleX(-1)}
+.samurai-charge{
+  position:absolute;
+  left:12%;top:50%;
+  width:64%;height:22%;
+  background:radial-gradient(circle, rgba(255,245,200,.9), rgba(255,220,140,.4) 55%, transparent 75%);
+  border-radius:50%;
+  opacity:0;
+  pointer-events:none;
+  z-index:1;
+}
+.samurai.charging .samurai-charge{animation:chargeGlow .4s ease-in-out infinite}
+@keyframes chargeGlow{
+  0%,100%{transform:scale(1);opacity:.5}
+  50%{transform:scale(1.28);opacity:.95}
+}
+.slash-line{
+  position:absolute;
+  left:0;right:0;
+  height:2px;
+  margin-top:-1px;
+  background:linear-gradient(90deg, transparent 0%, rgba(220,230,255,.85) 20%, rgba(255,255,255,.95) 50%, rgba(220,230,255,.85) 80%, transparent 100%);
+  box-shadow:0 0 12px rgba(190,210,255,.8);
+  animation:slashLinePulse .45s ease-in-out infinite;
+  pointer-events:none;
+  z-index:4;
+}
+@keyframes slashLinePulse{
+  0%,100%{opacity:.45}
+  50%{opacity:.95}
+}
+.slash-wave{
+  position:absolute;
+  left:0;top:0;
+  width:34px;height:18px;
+  pointer-events:none;
+  z-index:5;
+  filter:drop-shadow(0 0 8px rgba(200,220,255,.9));
+}
+.slash-wave svg{display:block;width:100%;height:100%}
 .player{
   position:absolute;
   left:0;top:0;
@@ -914,7 +964,7 @@ button:focus-visible{
       </button>
       <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도로 시작">
         <span class="diff-name">어려움</span>
-        <span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄 · ☢️ 핵 · ✈️ B200</span>
+        <span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄 · ☢️ 핵 · ✈️ B200 · ⚔️ 사무라이</span>
       </button>
     </div>
 
@@ -984,7 +1034,7 @@ button:focus-visible{
     <div class="diff-grid" role="group" aria-label="난이도 선택">
       <button class="diff-btn" data-diff="easy" type="button" aria-label="쉬움 난이도"><span class="diff-name">쉬움</span><span class="diff-desc">천천히 떨어지는 총알 · 최대 32발 · 살짝 휘어요</span></button>
       <button class="diff-btn" data-diff="normal" type="button" aria-label="보통 난이도"><span class="diff-name">보통</span><span class="diff-desc">보통 속도의 총알 · 최대 45발 · 휘는 총알</span></button>
-      <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도"><span class="diff-name">어려움</span><span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄 · ☢️ 핵 · ✈️ B200</span></button>
+      <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도"><span class="diff-name">어려움</span><span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄 · ☢️ 핵 · ✈️ B200 · ⚔️ 사무라이</span></button>
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" id="btnCancelDiff" type="button">취소</button>
@@ -1062,6 +1112,10 @@ button:focus-visible{
       <div class="rule-section">
         <h3>✈️ B200 (어려움 전용)</h3>
         <p>가끔 레이저가 지나갈 경로를 미리 비추고 B200 폭격기가 지나가요. 지나가는 길에 폭발이 계속 일어나니, 레이저 줄에 서 있지 마세요.</p>
+      </div>
+      <div class="rule-section">
+        <h3>⚔️ 사무라이 (어려움 전용)</h3>
+        <p>엄청 뜬금없이 사무라이가 나타나 준비자세를 해요. 하얀 선이 비추는 자리로 벽력일섬처럼 일자로 빠르게 베니, 그 줄에서 벗어나세요.</p>
       </div>
       <div class="rule-section">
         <h3>📦 아이템</h3>
@@ -1142,11 +1196,22 @@ const CARRIER_Y_MIN = 40;        // 비행 레인 y 최소
 const CARRIER_Y_MAX = 240;       // 비행 레인 y 최대
 const BLAST_INTERVAL = 0.35;     // 카펫 폭발 간격 (초)
 const BLAST_R = 48;              // 경로 폭발 반경 (px)
+const SAMURAI_FIRST = 20;        // 어려움: 첫 사무라이까지 (초)
+const SAMURAI_MIN = 18;          // 이후 최소 간격 (초)
+const SAMURAI_MAX = 30;          // 이후 최대 간격 (초)
+const SAMURAI_WARN = 2.0;        // 준비자세 시간 (초)
+const SAMURAI_Y_MIN = 60;        // 베는 레인 y 최소
+const SAMURAI_Y_MAX = 260;       // 베는 레인 y 최대
+const SLASH_SPEED = 720;         // 발도 검기 속도 (px/s) — B200보다 훨씬 빠른 일섬
+const SLASH_R = 16;              // 검기 판정 반경 (px)
+const SLASH_CUT = 18;            // 검기에 베이는 총알 밴드 (레인 중심 ±px)
 let item = null;                // 아이템 { x, y, vy, type: 'shield'|'life', el }
 let itemTimer = ITEM_FIRST;     // 다음 아이템까지 남은 시간 (초)
 let carrier = null;             // B200 { x, y, dir, state: 'warn'|'fly', timer, blastTimer, el, laserEl }
 let carrierTimer = CARRIER_FIRST;
 let b200Blasts = [];            // 경로 폭발 요소 추적 (리셋 시 정리용)
+let samurai = null;             // 사무라이 { x, y, dir, state: 'stance'|'slash', timer, el, lineEl, waveEl }
+let samuraiTimer = SAMURAI_FIRST;
 const MAX_BULLETS = 60;         // 풀 크기 = 최대 활성 총알 수 (어려움 기준)
 const INVULN_SECONDS = 1.5;
 const RAMP_RATE = 0.02;         // 초당 +2% 난이도 상승
@@ -1773,6 +1838,134 @@ function spawnBlast() {
   }, 750);
 }
 
+// ═══════════════════════════════════════════
+// 사무라이 (어려움 전용) — 뜬금없이 등장, 준비자세 후 일자 발도
+// ═══════════════════════════════════════════
+function resetSamurai() {
+  if (samurai) {
+    if (samurai.el) samurai.el.remove();
+    if (samurai.lineEl) samurai.lineEl.remove();
+    if (samurai.waveEl) samurai.waveEl.remove();
+    samurai = null;
+  }
+  samuraiTimer = SAMURAI_FIRST;
+}
+
+function clearSamurai() {
+  if (samurai) {
+    if (samurai.el) { samurai.el.remove(); samurai.el = null; }
+    if (samurai.lineEl) { samurai.lineEl.remove(); samurai.lineEl = null; }
+    if (samurai.waveEl) { samurai.waveEl.remove(); samurai.waveEl = null; }
+    samurai = null;
+  }
+}
+
+function samuraiSvg() {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 90 64');
+  svg.innerHTML =
+    '<ellipse cx="44" cy="61" rx="26" ry="3" fill="rgba(0,0,0,.3)"/>' +
+    '<path d="M36 40 L58 40 L56 58 L38 58 Z" fill="#232a38"/>' +
+    '<path d="M44 40 L44 58" stroke="#14181f" stroke-width="1.5"/>' +
+    '<path d="M42 18 L62 20 L56 40 L38 40 Z" fill="#2f3a4d"/>' +
+    '<path d="M42 18 L40 38 L56 40" fill="none" stroke="#232b39" stroke-width="2"/>' +
+    '<rect x="36" y="34" width="24" height="7" rx="2" fill="#1d2430"/>' +
+    '<path d="M56 22 Q62 28 54 36" fill="none" stroke="#2f3a4d" stroke-width="7" stroke-linecap="round"/>' +
+    '<rect x="48" y="36" width="20" height="4.5" rx="2.2" fill="#3a2a1c"/>' +
+    '<rect x="52" y="36" width="3" height="4.5" fill="#d8b45a"/>' +
+    '<ellipse cx="55" cy="38.5" rx="4" ry="3" fill="#e8c39e"/>' +
+    '<rect x="45.5" y="35.5" width="3" height="6" rx="1" fill="#c9a03c"/>' +
+    '<ellipse cx="40" cy="42" rx="3.5" ry="3" fill="#e8c39e"/>' +
+    '<path d="M38 41.5 L12 44.5 L12 41.5 L38 38.5 Z" fill="#4a2233"/>' +
+    '<circle cx="60" cy="12" r="7" fill="#e8c39e"/>' +
+    '<path d="M53 8 Q50 4 54 3.5 Q57 3.8 56 7 Z" fill="#241c14"/>' +
+    '<rect x="53" y="9" width="13" height="3" rx="1.5" fill="#f5f2ec"/>' +
+    '<circle cx="63" cy="12" r="1.1" fill="#1a1410"/>';
+  return svg;
+}
+
+function spawnSamurai() {
+  const y = SAMURAI_Y_MIN + Math.random() * (SAMURAI_Y_MAX - SAMURAI_Y_MIN);
+  const dir = Math.random() < 0.5 ? 1 : -1;
+  const el = document.createElement('div');
+  el.className = 'samurai';
+  const svg = samuraiSvg();
+  if (dir < 0) svg.classList.add('samurai-left');
+  el.appendChild(svg);
+  const charge = document.createElement('div');
+  charge.className = 'samurai-charge';
+  el.appendChild(charge);
+  el.style.transform = 'translate3d(' + (dir > 0 ? 14 : arenaW - 104) + 'px,' + (y - 40) + 'px,0)';
+  arenaEl.appendChild(el);
+  el.classList.add('charging');
+  const lineEl = document.createElement('div');
+  lineEl.className = 'slash-line';
+  lineEl.style.top = y + 'px';
+  arenaEl.appendChild(lineEl);
+  samurai = { x: dir > 0 ? 14 : arenaW - 104, y: y, dir: dir, state: 'stance', timer: SAMURAI_WARN, el: el, lineEl: lineEl, waveEl: null };
+  showToast('⚔️ 사무라이 등장!');
+  vibrate(30);
+}
+
+function slashWaveSvg() {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 34 18');
+  svg.innerHTML =
+    '<polygon points="2,8.2 26,8.2 26,9.8 2,9.8" fill="rgba(210,225,255,.4)"/>' +
+    '<path d="M30 1 Q34 9 30 17 Q24 9 30 1 Z" fill="rgba(250,252,255,.95)" stroke="#ffffff" stroke-width="1"/>' +
+    '<path d="M29 4 Q31.5 9 29 14 Q25.5 9 29 4 Z" fill="#ffffff"/>';
+  return svg;
+}
+
+function startSlash() {
+  if (!samurai) return;
+  samurai.state = 'slash';
+  samurai.timer = 0;
+  samurai.el.classList.remove('charging');
+  samurai.el.style.opacity = '0';
+  if (samurai.lineEl) { samurai.lineEl.remove(); samurai.lineEl = null; }
+  const el = document.createElement('div');
+  el.className = 'slash-wave';
+  el.appendChild(slashWaveSvg());
+  if (samurai.dir < 0) el.firstChild.classList.add('samurai-left');
+  el.style.transform = 'translate3d(' + (samurai.x + samurai.dir * 20 - 17) + 'px,' + (samurai.y - 9) + 'px,0)';
+  arenaEl.appendChild(el);
+  samurai.waveEl = el;
+  samurai.x = samurai.x + samurai.dir * 20;
+  setTimeout(function() {
+    if (samurai && samurai.el) samurai.el.remove();
+    if (samurai) samurai.el = null;
+  }, 400);
+}
+
+function updateSamurai(dt) {
+  if (!samurai) return;
+  if (samurai.state === 'stance') {
+    samurai.timer -= dt;
+    if (samurai.timer <= 0) startSlash();
+  } else if (samurai.state === 'slash') {
+    samurai.x += samurai.dir * SLASH_SPEED * dt;
+    if (samurai.waveEl) {
+      samurai.waveEl.style.transform = 'translate3d(' + (samurai.x - 17) + 'px,' + (samurai.y - 9) + 'px,0)';
+      if (invuln <= 0 && Math.hypot(player.x - samurai.x, player.y - samurai.y) < SLASH_R + HIT_RX) {
+        hitPlayer(null);
+        if (phase !== 'playing') return;
+      }
+      for (let i = 0; i < MAX_BULLETS; i++) {
+        const b = bullets[i];
+        if (b.active && Math.abs(b.x - samurai.x) < 30 && Math.abs(b.y - samurai.y) < SLASH_CUT) {
+          b.active = false;
+          activeCount--;
+          b.el.style.display = 'none';
+        }
+      }
+    }
+    if ((samurai.dir > 0 && samurai.x > arenaW + 40) || (samurai.dir < 0 && samurai.x < -40)) {
+      clearSamurai();
+    }
+  }
+}
+
 function updatePlayer(dt) {
   const minX = PLAYER_R;
   const minY = PLAYER_R;
@@ -1905,6 +2098,19 @@ function update(dt) {
       if ((carrier.dir > 0 && carrier.x > arenaW + 50) || (carrier.dir < 0 && carrier.x < -50)) {
         clearCarrier();
       }
+    }
+  }
+
+  // 사무라이 (어려움 전용): 뜬금없이 등장 → 준비자세 → 일자 발도 (벽력일섬)
+  if (difficulty === 'hard') {
+    if (!samurai) {
+      samuraiTimer -= dt;
+      if (samuraiTimer <= 0) {
+        spawnSamurai();
+        samuraiTimer = SAMURAI_MIN + Math.random() * (SAMURAI_MAX - SAMURAI_MIN);
+      }
+    } else {
+      updateSamurai(dt);
     }
   }
 
@@ -2091,6 +2297,7 @@ function startGame(diff) {
   resetNukes();
   resetItems();
   resetCarrier();
+  resetSamurai();
   keyState.up = keyState.down = keyState.left = keyState.right = false;
   showScreen('game');
   updateArenaMetrics();
@@ -2115,6 +2322,7 @@ function resumeFromSave(save) {
   resetNukes();
   resetItems();
   resetCarrier();
+  resetSamurai();
   keyState.up = keyState.down = keyState.left = keyState.right = false;
   showScreen('game');
   updateArenaMetrics();
