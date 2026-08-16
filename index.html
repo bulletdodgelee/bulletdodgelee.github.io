@@ -1119,7 +1119,7 @@ button:focus-visible{
       </div>
       <div class="rule-section">
         <h3>📦 아이템</h3>
-        <p>가끔 위에서 아이템이 떨어져요. 받으면 🛡️ 쉴드(잠시 무적)나 ❤️ 목숨 +1이 돼요. 목숨이 가득이면 쉴드가 떨어져요.</p>
+        <p>주기적으로 위에서 아이템이 떨어져요. 받으면 🛡️ 쉴드(잠시 무적)나 ❤️ 목숨 +1이 돼요. 목숨이 가득이면 쉴드가 떨어져요. 시간이 지날수록 모든 이벤트 간격이 짧아져요.</p>
       </div>
       <div class="rule-section">
         <h3>⌨️ 컴퓨터 · 키보드</h3>
@@ -1170,47 +1170,43 @@ const PLAYER_R = 9;             // 시각 반지름 (18px 원 — 총알보다 �
 const HIT_RX = 5;               // 충돌 판정 가로 반지름 (횡축 완화 — 세로보다 좁음)
 const HIT_RY = 7;               // 충돌 판정 세로 반지름 (관대한 히트박스)
 const BULLET_R = 7;             // 총알 반지름 (14px 원)
-const NUKE_MIN = 10;            // 어려움: 이후 최소 핵 간격 (초)
-const NUKE_MAX = 20;            // 어려움: 이후 최대 핵 간격 (초)
+const NUKE_MIN = 5;             // 공통 최소 간격 (초) — 전 이벤트 동일
+const NUKE_MAX = 10;            // 공통 최대 간격 (초) — 시간에 따라 감소
 const NUKE_WARN = 3;            // 핵 카운트다운 (초)
 const NUKE_RADIUS = 85;         // 핵 폭발 반경 (px)
-let nuke = null;                // 핵 상태 { x, y, timer, state: 'warn'|'blast' }
+let nukes = [];                 // 핵 인스턴스들 { x, y, timer, state: 'warn'|'blast', warnEl, countEl, blastEl, fallEl }
 const RAMP_RATE = 0.02;         // 초당 +2% 난이도 상승
 const MAX_RAMP = 2.5;           // 상승 한도 (2.5배)
 let elapsed = 0;                // 초 단위 (점수 = 생존 시간, 램프 계산 기준)
 
-let nukeTimer = eventDelay(NUKE_MIN, NUKE_MAX); // 다음 핵까지 남은 시간 (초)
-let nukeWarnEl = null;
-let nukeCountEl = null;
-let nukeBlastEl = null;
-let nukeFallEl = null;           // 하늘에서 떨어지는 핵 미사일 요소
-const ITEM_MIN = 12;           // 이후 최소 간격 (초)
-const ITEM_MAX = 24;           // 이후 최대 간격 (초)
+let nukeTimer = eventDelay(NUKE_MIN, NUKE_MAX); // 다음 핵까지 남은 시간 (초)           // 하늘에서 떨어지는 핵 미사일 요소
+const ITEM_MIN = 5;             // 공통 최소 간격 (초)
+const ITEM_MAX = 10;            // 공통 최대 간격 (초, 시간에 따라 감소)
 const ITEM_SPEED = 90;          // 아이템 낙하 속도 (px/s)
 const ITEM_CATCH_R = 34;        // 아이템 획득 판정 반경 (px)
 const SHIELD_SECONDS = 5;       // 쉴드 무적 시간 (초)
-const CARRIER_MIN = 15;          // 이후 최소 간격 (초)
-const CARRIER_MAX = 25;          // 이후 최대 간격 (초)
+const CARRIER_MIN = 5;          // 공통 최소 간격 (초)
+const CARRIER_MAX = 10;         // 공통 최대 간격 (초, 시간에 따라 감소)
 const CARRIER_WARN = 2.5;        // 레이저 경로 예고 시간 (초)
 const CARRIER_SPEED = 260;       // 횡단 속도 (px/s)
 const CARRIER_Y_MIN = 40;        // 비행 레인 y 최소
 const CARRIER_Y_MAX = 240;       // 비행 레인 y 최대
 const BLAST_INTERVAL = 0.35;     // 카펫 폭발 간격 (초)
 const BLAST_R = 48;              // 경로 폭발 반경 (px)
-const SAMURAI_MIN = 18;          // 이후 최소 간격 (초)
-const SAMURAI_MAX = 30;          // 이후 최대 간격 (초)
+const SAMURAI_MIN = 5;          // 공통 최소 간격 (초)
+const SAMURAI_MAX = 10;         // 공통 최대 간격 (초, 시간에 따라 감소)
 const SAMURAI_WARN = 2.0;        // 준비자세 시간 (초)
 const SAMURAI_Y_MIN = 60;        // 베는 레인 y 최소
 const SAMURAI_Y_MAX = 260;       // 베는 레인 y 최대
 const SLASH_SPEED = 720;         // 발도 검기 속도 (px/s) — B200보다 훨씬 빠른 일섬
 const SLASH_R = 16;              // 검기 판정 반경 (px)
 const SLASH_CUT = 18;            // 검기에 베이는 총알 밴드 (레인 중심 ±px)
-let item = null;                // 아이템 { x, y, vy, type: 'shield'|'life', el }
+let items = [];                 // 아이템 인스턴스들 { x, y, vy, type: 'shield'|'life', el }
 let itemTimer = eventDelay(ITEM_MIN, ITEM_MAX); // 다음 아이템까지 남은 시간 (초)
-let carrier = null;             // B200 { x, y, dir, state: 'warn'|'fly', timer, blastTimer, el, laserEl }
+let carriers = [];              // B200 인스턴스들 { x, y, dir, state: 'warn'|'fly', timer, blastTimer, el, laserEl }
 let carrierTimer = eventDelay(CARRIER_MIN, CARRIER_MAX);
-let b200Blasts = [];            // 경로 폭발 요소 추적 (리셋 시 정리용)
-let samurai = null;             // 사무라이 { x, y, dir, state: 'stance'|'slash', timer, el, lineEl, waveEl }
+let b200Blasts = [];
+let samurais = [];              // 사무라이 인스턴스들 { x, y, dir, state: 'stance'|'slash', timer, el, lineEl, waveEl }
 let samuraiTimer = eventDelay(SAMURAI_MIN, SAMURAI_MAX);
 const MAX_BULLETS = 60;         // 풀 크기 = 최대 활성 총알 수 (어려움 기준)
 const INVULN_SECONDS = 1.5;
@@ -1470,9 +1466,11 @@ function currentRamp() {
   return Math.min(MAX_RAMP, 1 + RAMP_RATE * elapsed);
 }
 
-// 이벤트 간격: 난이도 램프에 비례해 시간이 지날수록 짧아짐 (총알 램프와 동일한 1/ramp 방식)
+// 이벤트 간격: 전 이벤트 공통 5~10초 구간에서 랜덤 샘플링.
+// 시간이 지날수록 최대치가 줄어듦(10/currentRamp, 최소 5초 고정)
 function eventDelay(min, max) {
-  return (min + Math.random() * (max - min)) / currentRamp();
+  const hi = Math.max(min, max / currentRamp());
+  return min + Math.random() * (hi - min);
 }
 
 function randomInt(min, max) {
@@ -1605,11 +1603,13 @@ function updateBullets(dt) {
 // NUKE (어려움 전용) — 랜덤 위치 경고 후 폭발
 // ═══════════════════════════════════════════
 function resetNukes() {
-  nuke = null;
+  for (const nk of nukes) {
+    if (nk.warnEl) nk.warnEl.remove();
+    if (nk.blastEl) nk.blastEl.remove();
+    if (nk.fallEl) nk.fallEl.remove();
+  }
+  nukes = [];
   nukeTimer = eventDelay(NUKE_MIN, NUKE_MAX);
-  if (nukeWarnEl) { nukeWarnEl.remove(); nukeWarnEl = null; }
-  if (nukeBlastEl) { nukeBlastEl.remove(); nukeBlastEl = null; }
-  if (nukeFallEl) { nukeFallEl.remove(); nukeFallEl = null; }
 }
 
 function nukeSvg() {
@@ -1636,71 +1636,79 @@ function nukeSvg() {
 
 function spawnNuke() {
   const m = NUKE_RADIUS + 10;
-  nuke = {
+  const nk = {
     x: m + Math.random() * Math.max(0, arenaW - 2 * m),
     y: m + Math.random() * Math.max(0, arenaH - 2 * m),
     timer: NUKE_WARN,
-    state: 'warn'
+    state: 'warn',
+    warnEl: null, countEl: null, blastEl: null, fallEl: null
   };
-  nukeWarnEl = document.createElement('div');
-  nukeWarnEl.className = 'nuke-warn';
-  nukeCountEl = document.createElement('span');
-  nukeCountEl.className = 'nuke-count';
-  nukeWarnEl.appendChild(nukeCountEl);
-  arenaEl.appendChild(nukeWarnEl);
-  nukeBlastEl = document.createElement('div');
-  nukeBlastEl.className = 'nuke-blast';
-  arenaEl.appendChild(nukeBlastEl);
-  nukeWarnEl.style.left = nuke.x + 'px';
-  nukeWarnEl.style.top = nuke.y + 'px';
-  nukeBlastEl.style.left = nuke.x + 'px';
-  nukeBlastEl.style.top = nuke.y + 'px';
-  nukeBlastEl.style.width = nukeBlastEl.style.height = (NUKE_RADIUS * 2) + 'px';
-  nukeBlastEl.style.margin = (-NUKE_RADIUS) + 'px 0 0 ' + (-NUKE_RADIUS) + 'px';
-  nukeCountEl.textContent = String(Math.ceil(nuke.timer));
+  const warnEl = document.createElement('div');
+  warnEl.className = 'nuke-warn';
+  const countEl = document.createElement('span');
+  countEl.className = 'nuke-count';
+  warnEl.appendChild(countEl);
+  arenaEl.appendChild(warnEl);
+  const blastEl = document.createElement('div');
+  blastEl.className = 'nuke-blast';
+  arenaEl.appendChild(blastEl);
   // 하늘에서 떨어지는 핵 미사일: 경고 시작 시 위에서 출발해 폭발 순간 정확히 착탄
-  nukeFallEl = document.createElement('div');
-  nukeFallEl.className = 'nuke-fall';
-  nukeFallEl.appendChild(nukeSvg());
-  nukeFallEl.style.transform = 'translate3d(' + nuke.x + 'px,-40px,0)';
-  arenaEl.appendChild(nukeFallEl);
+  const fallEl = document.createElement('div');
+  fallEl.className = 'nuke-fall';
+  fallEl.appendChild(nukeSvg());
+  fallEl.style.transform = 'translate3d(' + nk.x + 'px,-40px,0)';
+  arenaEl.appendChild(fallEl);
+  warnEl.style.left = nk.x + 'px';
+  warnEl.style.top = nk.y + 'px';
+  blastEl.style.left = nk.x + 'px';
+  blastEl.style.top = nk.y + 'px';
+  blastEl.style.width = blastEl.style.height = (NUKE_RADIUS * 2) + 'px';
+  blastEl.style.margin = (-NUKE_RADIUS) + 'px 0 0 ' + (-NUKE_RADIUS) + 'px';
+  countEl.textContent = String(Math.ceil(nk.timer));
+  nk.warnEl = warnEl;
+  nk.countEl = countEl;
+  nk.blastEl = blastEl;
+  nk.fallEl = fallEl;
+  nukes.push(nk);
   showToast('☢️ 핵 경보!');
 }
 
-function detonateNuke() {
-  nuke.state = 'blast';
-  nuke.timer = 0.7;
-  if (nukeWarnEl) { nukeWarnEl.remove(); nukeWarnEl = null; }
-  if (nukeFallEl) { nukeFallEl.remove(); nukeFallEl = null; }
+function detonateNuke(nk) {
+  nk.state = 'blast';
+  nk.timer = 0.7;
+  if (nk.warnEl) { nk.warnEl.remove(); nk.warnEl = null; }
+  if (nk.fallEl) { nk.fallEl.remove(); nk.fallEl = null; }
   // 폭발 범위 내 플레이어 피격
-  if (invuln <= 0 && Math.hypot(player.x - nuke.x, player.y - nuke.y) < NUKE_RADIUS) {
+  if (invuln <= 0 && Math.hypot(player.x - nk.x, player.y - nk.y) < NUKE_RADIUS) {
     hitPlayer(null);
     if (phase !== 'playing') return;
   }
   // 폭발 범위 내 총알 정리
   for (let i = 0; i < MAX_BULLETS; i++) {
     const b = bullets[i];
-    if (b.active && Math.hypot(b.x - nuke.x, b.y - nuke.y) < NUKE_RADIUS + BULLET_R) {
+    if (b.active && Math.hypot(b.x - nk.x, b.y - nk.y) < NUKE_RADIUS + BULLET_R) {
       b.active = false;
       activeCount--;
       b.el.style.display = 'none';
     }
   }
-  nukeBlastEl.classList.add('boom');
+  if (nk.blastEl) nk.blastEl.classList.add('boom');
   vibrate(80);
   shakeArena();
 }
 
-function clearNuke() {
-  if (nukeBlastEl) { nukeBlastEl.remove(); nukeBlastEl = null; }
-  nuke = null;
+function clearNuke(nk) {
+  if (nk.blastEl) { nk.blastEl.remove(); nk.blastEl = null; }
+  const idx = nukes.indexOf(nk);
+  if (idx >= 0) nukes.splice(idx, 1);
 }
 
 // ═══════════════════════════════════════════
-// ITEM (모든 난이도 공통, 낮은 빈도) — 위에서 낙하
+// ITEM (모든 난이도 공통) — 위에서 낙하
 // ═══════════════════════════════════════════
 function resetItems() {
-  if (item) { item.el.remove(); item = null; }
+  for (const it of items) if (it.el) it.el.remove();
+  items = [];
   itemTimer = eventDelay(ITEM_MIN, ITEM_MAX);
 }
 
@@ -1714,13 +1722,13 @@ function spawnItem() {
   emoji.textContent = type === 'life' ? '❤️' : '🛡️';
   el.appendChild(emoji);
   arenaEl.appendChild(el);
-  item = {
+  items.push({
     x: PLAYER_R + Math.random() * Math.max(0, arenaW - 2 * PLAYER_R),
     y: -20,
     vy: ITEM_SPEED,
     type: type,
     el: el
-  };
+  });
 }
 
 function applyShield() {
@@ -1742,33 +1750,32 @@ function collectItem(it) {
     showToast('❤️ 목숨 +1!');
   }
   vibrate(40);
-  it.el.remove();
-  item = null;
+  if (it.el) it.el.remove();
+  const idx = items.indexOf(it);
+  if (idx >= 0) items.splice(idx, 1);
 }
 
 // ═══════════════════════════════════════════
 // B200 (어려움 전용) — 레이저 경로 예고 후 지나가며 카펫 폭격
 // ═══════════════════════════════════════════
 function resetCarrier() {
-  if (carrier) {
-    if (carrier.laserEl) carrier.laserEl.remove();
-    if (carrier.el) carrier.el.remove();
-    carrier = null;
+  for (const cr of carriers) {
+    if (cr.laserEl) cr.laserEl.remove();
+    if (cr.el) cr.el.remove();
   }
+  carriers = [];
   for (let i = b200Blasts.length - 1; i >= 0; i--) {
-    const bl = b200Blasts[i];
-    if (bl.el) bl.el.remove();
+    if (b200Blasts[i].el) b200Blasts[i].el.remove();
   }
   b200Blasts = [];
   carrierTimer = eventDelay(CARRIER_MIN, CARRIER_MAX);
 }
 
-function clearCarrier() {
-  if (carrier) {
-    if (carrier.laserEl) { carrier.laserEl.remove(); carrier.laserEl = null; }
-    if (carrier.el) { carrier.el.remove(); carrier.el = null; }
-    carrier = null;
-  }
+function clearCarrier(cr) {
+  if (cr.laserEl) { cr.laserEl.remove(); cr.laserEl = null; }
+  if (cr.el) { cr.el.remove(); cr.el = null; }
+  const idx = carriers.indexOf(cr);
+  if (idx >= 0) carriers.splice(idx, 1);
 }
 
 function b200Svg() {
@@ -1793,43 +1800,44 @@ function spawnCarrier() {
   laserEl.className = 'carrier-laser';
   laserEl.style.top = y + 'px';
   arenaEl.appendChild(laserEl);
-  carrier = { x: 0, y: y, dir: dir, state: 'warn', timer: CARRIER_WARN, blastTimer: 0, el: null, laserEl: laserEl };
+  const cr = { x: 0, y: y, dir: dir, state: 'warn', timer: CARRIER_WARN, blastTimer: 0, el: null, laserEl: laserEl };
+  carriers.push(cr);
   showToast('✈️ B200 접근!');
   vibrate(50);
 }
 
-function startCarrierFly() {
+function startCarrierFly(cr) {
   const el = document.createElement('div');
   el.className = 'carrier';
   const svg = b200Svg();
-  if (carrier.dir < 0) svg.classList.add('carrier-left');
+  if (cr.dir < 0) svg.classList.add('carrier-left');
   el.appendChild(svg);
   arenaEl.appendChild(el);
-  carrier.el = el;
-  carrier.x = carrier.dir > 0 ? -50 : arenaW + 50;
-  carrier.state = 'fly';
-  carrier.blastTimer = 0.25;
-  syncCarrierEl();
+  cr.el = el;
+  cr.x = cr.dir > 0 ? -50 : arenaW + 50;
+  cr.state = 'fly';
+  cr.blastTimer = 0.25;
+  syncCarrierEl(cr);
 }
 
-function syncCarrierEl() {
-  carrier.el.style.transform = 'translate3d(' + carrier.x + 'px,' + (carrier.y - 14) + 'px,0)';
+function syncCarrierEl(cr) {
+  if (cr.el) cr.el.style.transform = 'translate3d(' + cr.x + 'px,' + (cr.y - 14) + 'px,0)';
 }
 
-function spawnBlast() {
-  const x = Math.max(BLAST_R + 8, Math.min(arenaW - BLAST_R - 8, carrier.x + (Math.random() * 20 - 10)));
+function spawnBlast(cr) {
+  const x = Math.max(BLAST_R + 8, Math.min(arenaW - BLAST_R - 8, cr.x + (Math.random() * 20 - 10)));
   const el = document.createElement('div');
   el.className = 'b200-blast';
   el.style.left = x + 'px';
-  el.style.top = carrier.y + 'px';
+  el.style.top = cr.y + 'px';
   el.style.width = el.style.height = (BLAST_R * 2) + 'px';
   el.style.margin = (-BLAST_R) + 'px 0 0 ' + (-BLAST_R) + 'px';
   arenaEl.appendChild(el);
   el.classList.add('boom');
-  const blast = { x: x, y: carrier.y, el: el };
+  const blast = { x: x, y: cr.y, el: el };
   b200Blasts.push(blast);
   // 폭발 반경 내 플레이어 피격
-  if (invuln <= 0 && Math.hypot(player.x - x, player.y - carrier.y) < BLAST_R + HIT_RX) {
+  if (invuln <= 0 && Math.hypot(player.x - x, player.y - cr.y) < BLAST_R + HIT_RX) {
     hitPlayer(null);
     if (phase !== 'playing') return;
   }
@@ -1844,22 +1852,21 @@ function spawnBlast() {
 // 사무라이 (어려움 전용) — 뜬금없이 등장, 준비자세 후 일자 발도
 // ═══════════════════════════════════════════
 function resetSamurai() {
-  if (samurai) {
-    if (samurai.el) samurai.el.remove();
-    if (samurai.lineEl) samurai.lineEl.remove();
-    if (samurai.waveEl) samurai.waveEl.remove();
-    samurai = null;
+  for (const sm of samurais) {
+    if (sm.el) sm.el.remove();
+    if (sm.lineEl) sm.lineEl.remove();
+    if (sm.waveEl) sm.waveEl.remove();
   }
+  samurais = [];
   samuraiTimer = eventDelay(SAMURAI_MIN, SAMURAI_MAX);
 }
 
-function clearSamurai() {
-  if (samurai) {
-    if (samurai.el) { samurai.el.remove(); samurai.el = null; }
-    if (samurai.lineEl) { samurai.lineEl.remove(); samurai.lineEl = null; }
-    if (samurai.waveEl) { samurai.waveEl.remove(); samurai.waveEl = null; }
-    samurai = null;
-  }
+function clearSamurai(sm) {
+  if (sm.el) { sm.el.remove(); sm.el = null; }
+  if (sm.lineEl) { sm.lineEl.remove(); sm.lineEl = null; }
+  if (sm.waveEl) { sm.waveEl.remove(); sm.waveEl = null; }
+  const idx = samurais.indexOf(sm);
+  if (idx >= 0) samurais.splice(idx, 1);
 }
 
 function samuraiSvg() {
@@ -1904,7 +1911,8 @@ function spawnSamurai() {
   lineEl.className = 'slash-line';
   lineEl.style.top = y + 'px';
   arenaEl.appendChild(lineEl);
-  samurai = { x: dir > 0 ? 14 : arenaW - 104, y: y, dir: dir, state: 'stance', timer: SAMURAI_WARN, el: el, lineEl: lineEl, waveEl: null };
+  const sm = { x: dir > 0 ? 14 : arenaW - 104, y: y, dir: dir, state: 'stance', timer: SAMURAI_WARN, el: el, lineEl: lineEl, waveEl: null };
+  samurais.push(sm);
   showToast('⚔️ 사무라이 등장!');
   vibrate(30);
 }
@@ -1919,51 +1927,51 @@ function slashWaveSvg() {
   return svg;
 }
 
-function startSlash() {
-  if (!samurai) return;
-  samurai.state = 'slash';
-  samurai.timer = 0;
-  samurai.el.classList.remove('charging');
-  samurai.el.style.opacity = '0';
-  if (samurai.lineEl) { samurai.lineEl.remove(); samurai.lineEl = null; }
+function startSlash(sm) {
+  sm.state = 'slash';
+  sm.timer = 0;
+  if (sm.el) {
+    sm.el.classList.remove('charging');
+    sm.el.style.opacity = '0';
+  }
+  if (sm.lineEl) { sm.lineEl.remove(); sm.lineEl = null; }
   const el = document.createElement('div');
   el.className = 'slash-wave';
   el.appendChild(slashWaveSvg());
-  if (samurai.dir < 0) el.firstChild.classList.add('samurai-left');
-  el.style.transform = 'translate3d(' + (samurai.x + samurai.dir * 20 - 17) + 'px,' + (samurai.y - 9) + 'px,0)';
+  if (sm.dir < 0) el.firstChild.classList.add('samurai-left');
+  el.style.transform = 'translate3d(' + (sm.x + sm.dir * 20 - 17) + 'px,' + (sm.y - 9) + 'px,0)';
   arenaEl.appendChild(el);
-  samurai.waveEl = el;
-  samurai.x = samurai.x + samurai.dir * 20;
+  sm.waveEl = el;
+  sm.x = sm.x + sm.dir * 20;
+  const cur = sm;
   setTimeout(function() {
-    if (samurai && samurai.el) samurai.el.remove();
-    if (samurai) samurai.el = null;
+    if (cur.el) { cur.el.remove(); cur.el = null; }
   }, 400);
 }
 
-function updateSamurai(dt) {
-  if (!samurai) return;
-  if (samurai.state === 'stance') {
-    samurai.timer -= dt;
-    if (samurai.timer <= 0) startSlash();
-  } else if (samurai.state === 'slash') {
-    samurai.x += samurai.dir * SLASH_SPEED * dt;
-    if (samurai.waveEl) {
-      samurai.waveEl.style.transform = 'translate3d(' + (samurai.x - 17) + 'px,' + (samurai.y - 9) + 'px,0)';
-      if (invuln <= 0 && Math.hypot(player.x - samurai.x, player.y - samurai.y) < SLASH_R + HIT_RX) {
+function updateSamurai(sm, dt) {
+  if (sm.state === 'stance') {
+    sm.timer -= dt;
+    if (sm.timer <= 0) startSlash(sm);
+  } else if (sm.state === 'slash') {
+    sm.x += sm.dir * SLASH_SPEED * dt;
+    if (sm.waveEl) {
+      sm.waveEl.style.transform = 'translate3d(' + (sm.x - 17) + 'px,' + (sm.y - 9) + 'px,0)';
+      if (invuln <= 0 && Math.hypot(player.x - sm.x, player.y - sm.y) < SLASH_R + HIT_RX) {
         hitPlayer(null);
         if (phase !== 'playing') return;
       }
       for (let i = 0; i < MAX_BULLETS; i++) {
         const b = bullets[i];
-        if (b.active && Math.abs(b.x - samurai.x) < 30 && Math.abs(b.y - samurai.y) < SLASH_CUT) {
+        if (b.active && Math.abs(b.x - sm.x) < 30 && Math.abs(b.y - sm.y) < SLASH_CUT) {
           b.active = false;
           activeCount--;
           b.el.style.display = 'none';
         }
       }
     }
-    if ((samurai.dir > 0 && samurai.x > arenaW + 40) || (samurai.dir < 0 && samurai.x < -40)) {
-      clearSamurai();
+    if ((sm.dir > 0 && sm.x > arenaW + 40) || (sm.dir < 0 && sm.x < -40)) {
+      clearSamurai(sm);
     }
   }
 }
@@ -2056,81 +2064,91 @@ function update(dt) {
   updateBullets(dt);
 
   // 핵 (어려움 전용): 랜덤 위치 경고 → 3,2,1 카운트다운 → 미사일 착탄 폭발
+  // 타이머는 항상 진행(활성 중에도 멈추지 않음) — 같은 종류 이벤트 중복 발생 가능
   if (difficulty === 'hard') {
-    if (!nuke) {
-      nukeTimer -= dt;
-      if (nukeTimer <= 0) {
-        spawnNuke();
-        nukeTimer = eventDelay(NUKE_MIN, NUKE_MAX);
+    nukeTimer -= dt;
+    if (nukeTimer <= 0) {
+      spawnNuke();
+      nukeTimer = eventDelay(NUKE_MIN, NUKE_MAX);
+    }
+    for (let i = nukes.length - 1; i >= 0; i--) {
+      const nk = nukes[i];
+      if (nk.state === 'warn') {
+        nk.timer -= dt;
+        if (nk.countEl) nk.countEl.textContent = String(Math.ceil(nk.timer));
+        // 핵 미사일 낙하: 경고 시작 시 위에서 출발해 카운트다운이 0이 되는 순간 정확히 착탄
+        if (nk.fallEl) {
+          const fy = -40 + (nk.y + 40) * (1 - nk.timer / NUKE_WARN);
+          nk.fallEl.style.transform = 'translate3d(' + nk.x + 'px,' + fy + 'px,0)';
+        }
+        if (nk.timer <= 0) {
+          detonateNuke(nk);
+          if (phase !== 'playing') return;
+        }
+      } else {
+        nk.timer -= dt;
+        if (nk.timer <= 0) clearNuke(nk);
       }
-    } else if (nuke.state === 'warn') {
-      nuke.timer -= dt;
-      nukeCountEl.textContent = String(Math.ceil(nuke.timer));
-      // 핵 미사일 낙하: 경고 시작 시 위에서 출발해 카운트다운이 0이 되는 순간 정확히 착탄
-      if (nukeFallEl) {
-        const fy = -40 + (nuke.y + 40) * (1 - nuke.timer / NUKE_WARN);
-        nukeFallEl.style.transform = 'translate3d(' + nuke.x + 'px,' + fy + 'px,0)';
-      }
-      if (nuke.timer <= 0) detonateNuke();
-    } else {
-      nuke.timer -= dt;
-      if (nuke.timer <= 0) clearNuke();
     }
   }
 
   // B200 (어려움 전용): 레이저 경로 예고 → 횡단하며 경로에 카펫 폭격
   if (difficulty === 'hard') {
-    if (!carrier) {
-      carrierTimer -= dt;
-      if (carrierTimer <= 0) {
-        spawnCarrier();
-        carrierTimer = eventDelay(CARRIER_MIN, CARRIER_MAX);
-      }
-    } else if (carrier.state === 'warn') {
-      carrier.timer -= dt;
-      if (carrier.timer <= 0) startCarrierFly();
-    } else if (carrier.state === 'fly') {
-      carrier.x += carrier.dir * CARRIER_SPEED * dt;
-      syncCarrierEl();
-      carrier.blastTimer -= dt;
-      if (carrier.blastTimer <= 0) {
-        spawnBlast();
-        carrier.blastTimer = BLAST_INTERVAL;
-      }
-      if ((carrier.dir > 0 && carrier.x > arenaW + 50) || (carrier.dir < 0 && carrier.x < -50)) {
-        clearCarrier();
+    carrierTimer -= dt;
+    if (carrierTimer <= 0) {
+      spawnCarrier();
+      carrierTimer = eventDelay(CARRIER_MIN, CARRIER_MAX);
+    }
+    for (let i = carriers.length - 1; i >= 0; i--) {
+      const cr = carriers[i];
+      if (cr.state === 'warn') {
+        cr.timer -= dt;
+        if (cr.timer <= 0) startCarrierFly(cr);
+      } else if (cr.state === 'fly') {
+        cr.x += cr.dir * CARRIER_SPEED * dt;
+        syncCarrierEl(cr);
+        cr.blastTimer -= dt;
+        if (cr.blastTimer <= 0) {
+          spawnBlast(cr);
+          if (phase !== 'playing') return;
+          cr.blastTimer = BLAST_INTERVAL;
+        }
+        if ((cr.dir > 0 && cr.x > arenaW + 50) || (cr.dir < 0 && cr.x < -50)) {
+          clearCarrier(cr);
+        }
       }
     }
   }
 
   // 사무라이 (어려움 전용): 뜬금없이 등장 → 준비자세 → 일자 발도 (벽력일섬)
   if (difficulty === 'hard') {
-    if (!samurai) {
-      samuraiTimer -= dt;
-      if (samuraiTimer <= 0) {
-        spawnSamurai();
-        samuraiTimer = eventDelay(SAMURAI_MIN, SAMURAI_MAX);
-      }
-    } else {
-      updateSamurai(dt);
+    samuraiTimer -= dt;
+    if (samuraiTimer <= 0) {
+      spawnSamurai();
+      samuraiTimer = eventDelay(SAMURAI_MIN, SAMURAI_MAX);
+    }
+    for (let i = samurais.length - 1; i >= 0; i--) {
+      updateSamurai(samurais[i], dt);
+      if (phase !== 'playing') return;
     }
   }
 
-  // 아이템 (모든 난이도): 낮은 빈도로 위에서 낙하, 닿으면 획득
-  if (!item) {
-    itemTimer -= dt;
-    if (itemTimer <= 0) {
-      spawnItem();
-        itemTimer = eventDelay(ITEM_MIN, ITEM_MAX);
-    }
-  } else {
-    item.y += item.vy * dt;
-    item.el.style.transform = 'translate3d(' + item.x + 'px,' + item.y + 'px,0)';
-    if (item.y > arenaH + 40) {
-      item.el.remove();
-      item = null;
-    } else if (Math.hypot(player.x - item.x, player.y - item.y) < ITEM_CATCH_R) {
-      collectItem(item);
+  // 아이템 (모든 난이도): 위에서 낙하, 닿으면 획득
+  itemTimer -= dt;
+  if (itemTimer <= 0) {
+    spawnItem();
+    itemTimer = eventDelay(ITEM_MIN, ITEM_MAX);
+  }
+  for (let i = items.length - 1; i >= 0; i--) {
+    const it = items[i];
+    it.y += it.vy * dt;
+    it.el.style.transform = 'translate3d(' + it.x + 'px,' + it.y + 'px,0)';
+    if (it.y > arenaH + 40) {
+      it.el.remove();
+      items.splice(i, 1);
+    } else if (Math.hypot(player.x - it.x, player.y - it.y) < ITEM_CATCH_R) {
+      collectItem(it);
+      if (phase !== 'playing') return;
     }
   }
 }
