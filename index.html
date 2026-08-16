@@ -628,6 +628,108 @@ body{
   filter:drop-shadow(0 0 8px rgba(200,220,255,.9));
 }
 .slash-wave svg{display:block;width:100%;height:100%}
+/* 로봇청소기 (어려움 전용) — 아무렇게나 굴러다니며 총알 흡입 */
+.vacuum{
+  position:absolute;left:0;top:0;
+  width:56px;height:56px;
+  pointer-events:none;z-index:5;
+  filter:drop-shadow(0 0 8px rgba(120,180,255,.5));
+}
+.vacuum svg{display:block;width:100%;height:100%}
+/* 지진 (어려움 전용) — 화면 흔들림 */
+.arena.quake{animation:quakeShake .45s linear infinite}
+@keyframes quakeShake{
+  0%,100%{transform:translate(0,0)}
+  20%{transform:translate(-7px,4px)}
+  40%{transform:translate(6px,-5px)}
+  60%{transform:translate(-5px,-4px)}
+  80%{transform:translate(7px,5px)}
+}
+/* UFO (어려움 전용) — 광선 예고 후 납치 */
+.ufo{
+  position:absolute;left:0;top:0;
+  width:64px;height:30px;
+  pointer-events:none;z-index:6;
+  filter:drop-shadow(0 0 10px rgba(140,220,255,.7));
+}
+.ufo svg{display:block;width:100%;height:100%}
+.ufo-warn{
+  position:absolute;top:0;bottom:0;
+  width:3px;margin-left:-1.5px;
+  background:linear-gradient(180deg, rgba(140,220,255,0) 0%, rgba(140,220,255,.65) 30%, rgba(140,220,255,.65) 70%, rgba(140,220,255,0) 100%);
+  box-shadow:0 0 12px rgba(140,220,255,.6);
+  animation:ufoScan .4s ease-in-out infinite;
+  pointer-events:none;z-index:5;
+}
+.ufo-beam{
+  position:absolute;top:0;bottom:0;
+  width:100px;margin-left:-50px;
+  background:linear-gradient(180deg, rgba(140,220,255,.05) 0%, rgba(140,220,255,.38) 60%, rgba(255,255,255,.25) 100%);
+  opacity:0;
+  pointer-events:none;z-index:4;
+}
+.ufo-beam.on{opacity:1;animation:ufoScan .3s ease-in-out infinite}
+@keyframes ufoScan{
+  0%,100%{opacity:.45}
+  50%{opacity:1}
+}
+/* 비둘기 (어려움 전용) — 그림자 예고 후 투하 */
+.pigeon-warn{
+  position:absolute;left:0;right:0;
+  height:2px;margin-top:-1px;
+  background:linear-gradient(90deg, transparent 0%, rgba(160,180,200,.6) 20%, rgba(200,215,230,.85) 50%, rgba(160,180,200,.6) 80%, transparent 100%);
+  box-shadow:0 0 10px rgba(160,190,220,.5);
+  animation:slashLinePulse .45s ease-in-out infinite;
+  pointer-events:none;z-index:4;
+}
+.pigeon{
+  position:absolute;left:0;top:0;
+  width:40px;height:30px;
+  pointer-events:none;z-index:5;
+  filter:drop-shadow(0 0 6px rgba(140,160,180,.5));
+}
+.pigeon svg{display:block;width:100%;height:100%}
+.poop{
+  position:absolute;left:0;top:0;
+  width:20px;height:24px;
+  pointer-events:none;z-index:5;
+}
+.poop svg{display:block;width:100%;height:100%}
+.poop-blast{
+  position:absolute;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(190,150,90,.95) 0%, rgba(140,100,50,.6) 45%, transparent 72%);
+  border:3px solid rgba(150,110,60,.9);
+  width:88px;height:88px;
+  margin:-44px 0 0 -44px;
+  pointer-events:none;z-index:3;
+  animation:poopSplat .5s ease-out forwards;
+}
+@keyframes poopSplat{
+  0%{transform:scale(.3);opacity:0}
+  30%{opacity:1}
+  100%{transform:scale(1.2);opacity:0}
+}
+/* 쓰나미 (어려움 전용) — 화면을 쓸고 지나가는 파도 */
+.tsunami{
+  position:absolute;left:0;top:0;
+  pointer-events:none;z-index:4;
+  filter:drop-shadow(0 0 16px rgba(59,130,246,.6));
+}
+.tsunami svg{display:block;width:100%;height:100%}
+/* 고양이 (어려움 전용) — 총알을 쳐내며 가로지름 */
+.cat{
+  position:absolute;left:0;top:0;
+  width:44px;height:26px;
+  pointer-events:none;z-index:5;
+  filter:drop-shadow(0 0 6px rgba(255,180,90,.35));
+}
+.cat svg{display:block;width:100%;height:100%}
+.cat.grooming svg{animation:catGroom .9s ease-in-out infinite}
+@keyframes catGroom{
+  0%,100%{transform:rotate(0deg)}
+  50%{transform:rotate(-8deg)}
+}
 .player{
   position:absolute;
   left:0;top:0;
@@ -964,7 +1066,7 @@ button:focus-visible{
       </button>
       <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도로 시작">
         <span class="diff-name">어려움</span>
-        <span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄 · ☢️ 핵 · ✈️ B200 · ⚔️ 사무라이</span>
+        <span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄 · 🎲 예측 불가 이벤트</span>
       </button>
     </div>
 
@@ -1034,7 +1136,7 @@ button:focus-visible{
     <div class="diff-grid" role="group" aria-label="난이도 선택">
       <button class="diff-btn" data-diff="easy" type="button" aria-label="쉬움 난이도"><span class="diff-name">쉬움</span><span class="diff-desc">천천히 떨어지는 총알 · 최대 32발 · 살짝 휘어요</span></button>
       <button class="diff-btn" data-diff="normal" type="button" aria-label="보통 난이도"><span class="diff-name">보통</span><span class="diff-desc">보통 속도의 총알 · 최대 45발 · 휘는 총알</span></button>
-      <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도"><span class="diff-name">어려움</span><span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄 · ☢️ 핵 · ✈️ B200 · ⚔️ 사무라이</span></button>
+      <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도"><span class="diff-name">어려움</span><span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄 · 🎲 예측 불가 이벤트</span></button>
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" id="btnCancelDiff" type="button">취소</button>
@@ -1106,20 +1208,12 @@ button:focus-visible{
         <p>난이도가 높아지면 총알이 빙글빙글 돌며 날아와요. 도는 궤도를 보고 피하세요.</p>
       </div>
       <div class="rule-section">
-        <h3>☢️ 핵 (어려움 전용)</h3>
-        <p>랜덤한 위치에 경고 원과 3,2,1 카운트다운이 뜨고, 하늘에서 핵 미사일이 떨어져 그 자리에 폭발해요. 원 안에 있으면 목숨을 잃으니 카운트다운 동안 꼭 피하세요. 폭발 범위 안의 총알은 함께 사라져요.</p>
-      </div>
-      <div class="rule-section">
-        <h3>✈️ B200 (어려움 전용)</h3>
-        <p>가끔 레이저가 지나갈 경로를 미리 비추고 B200 폭격기가 지나가요. 지나가는 길에 폭발이 계속 일어나니, 레이저 줄에 서 있지 마세요.</p>
-      </div>
-      <div class="rule-section">
-        <h3>⚔️ 사무라이 (어려움 전용)</h3>
-        <p>엄청 뜬금없이 사무라이가 나타나 준비자세를 해요. 하얀 선이 비추는 자리로 벽력일섬처럼 일자로 빠르게 베니, 그 줄에서 벗어나세요.</p>
+        <h3>🎲 예측 불가 (어려움 전용)</h3>
+        <p>어려움 모드에선 예고 없이 이런저런 일이 벌어져요. 정신을 차리는 사이 무슨 일이… 항상 화면 곳곳을 주의하세요!</p>
       </div>
       <div class="rule-section">
         <h3>📦 아이템</h3>
-        <p>10초마다 위에서 아이템이 떨어져요. 받으면 🛡️ 쉴드(잠시 무적)나 ❤️ 목숨 +1이 돼요. 목숨이 가득이면 쉴드가 떨어져요. 핵·B200·사무라이는 시간이 지날수록 간격이 짧아져요.</p>
+        <p>10초마다 위에서 아이템이 떨어져요. 받으면 🛡️ 쉴드(잠시 무적)나 ❤️ 목숨 +1이 돼요. 목숨이 가득이면 쉴드가 떨어져요.</p>
       </div>
       <div class="rule-section">
         <h3>⌨️ 컴퓨터 · 키보드</h3>
@@ -1201,13 +1295,66 @@ const SAMURAI_Y_MAX = 260;       // 베는 레인 y 최대
 const SLASH_SPEED = 720;         // 발도 검기 속도 (px/s) — B200보다 훨씬 빠른 일섬
 const SLASH_R = 16;              // 검기 판정 반경 (px)
 const SLASH_CUT = 18;            // 검기에 베이는 총알 밴드 (레인 중심 ±px)
+// 로봇청소기 (어려움 전용) — 아무렇게나 굴러다니며 총알 흡입, 집사와 부딪히면 피해
+const VACUUM_MIN = 14;           // 발생 간격 (초)
+const VACUUM_MAX = 28;
+const VACUUM_SPEED = 140;        // 이동 속도 (px/s)
+const VACUUM_R = 38;             // 흡입/접촉 반경 (px)
+const VACUUM_DURATION = 7;       // 활동 후 퇴장 (초)
+// 지진 (어려움 전용) — 화면 흔들림 + 모든 총알 궤적 랜덤 휘어짐
+const QUAKE_MIN = 18;
+const QUAKE_MAX = 36;
+const QUAKE_DURATION = 2.2;      // 지속 시간 (초)
+const QUAKE_JITTER = 0.9;        // 총알 방향 랜덤 편차 (라디안/초)
+// UFO (어려움 전용) — 광선으로 총알 흡수, 플레이어는 잠시 납치
+const UFO_MIN = 16;
+const UFO_MAX = 32;
+const UFO_WARN = 2.0;            // 광선 예고 (초)
+const UFO_DURATION = 3.0;        // 광선 지속 (초)
+const UFO_BEAM_W = 100;          // 광선 폭 (px)
+const UFO_ABDUCT = 0.8;          // 납치 시간 (초)
+// 비둘기 (어려움 전용) — 가로/대각으로 지나가며 투하물 투하
+const PIGEON_MIN = 15;
+const PIGEON_MAX = 30;
+const PIGEON_WARN = 1.8;         // 그림자 예고 (초)
+const PIGEON_SPEED = 210;        // 횡단 속도 (px/s)
+const PIGEON_Y_MIN = 40;
+const PIGEON_Y_MAX = 240;
+const POOP_FALL = 340;           // 투하물 낙하 속도 (px/s)
+const POOP_R = 44;               // 투하물 폭발 반경 (px)
+// 쓰나미 (어려움 전용) — 화면을 쓸고 지나가는 파도
+const TSUNAMI_MIN = 22;
+const TSUNAMI_MAX = 44;
+const TSUNAMI_WARN = 1.5;        // 경보 후 발생 지연 (초)
+const TSUNAMI_SPEED = 250;       // 진행 속도 (px/s)
+const TSUNAMI_W = 110;           // 파도 두께 (px)
+// 고양이 (어려움 전용) — 총알을 쳐내며 가로지름 (플레이어에게는 무해)
+const CAT_MIN = 18;
+const CAT_MAX = 36;
+const CAT_SPEED = 70;            // 걷기 속도 (px/s)
+const CAT_CLEAR_R = 64;          // 총알 쳐내기 반경 (px)
+const CAT_Y_MIN = 40;
+const CAT_Y_MAX = 260;
 let items = [];                 // 아이템 인스턴스들 { x, y, vy, type: 'shield'|'life', el }
 let itemTimer = eventDelay(ITEM_MIN, ITEM_MAX); // 다음 아이템까지 남은 시간 (초)
 let carriers = [];              // B200 인스턴스들 { x, y, dir, state: 'warn'|'fly', timer, blastTimer, el, laserEl }
 let carrierTimer = eventDelay(CARRIER_MIN, CARRIER_MAX);
 let b200Blasts = [];
-let samurais = [];              // 사무라이 인스턴스들 { x, y, dir, state: 'stance'|'slash', timer, el, lineEl, waveEl }
+let samurais = [];              // 사무라이 인스턴스들 { x, y, dx, dy, diag, state: 'stance'|'slash', timer, el, lineEl, waveEl }
 let samuraiTimer = eventDelay(SAMURAI_MIN, SAMURAI_MAX);
+let vacuums = [];               // 로봇청소기 인스턴스들 { x, y, vx, vy, timer, el }
+let vacuumTimer = eventDelay(VACUUM_MIN, VACUUM_MAX);
+let quake = null;               // 지진 { timer } — 전역 흔들림 효과 (중복 발생 안 함)
+let quakeTimer = eventDelay(QUAKE_MIN, QUAKE_MAX);
+let ufos = [];                  // UFO 인스턴스들 { x, y, state: 'warn'|'beam', timer, warnEl, beamEl, el }
+let ufoTimer = eventDelay(UFO_MIN, UFO_MAX);
+let pigeons = [];               // 비둘기 인스턴스들 { x, y, dx, dy, diag, state, timer, dropX, dropped, poopY, blastTimer, warnEl, el, poopEl, blastEl }
+let pigeonTimer = eventDelay(PIGEON_MIN, PIGEON_MAX);
+let tsunamis = [];              // 쓰나미 인스턴스들 { x, dir, timer, el }
+let tsunamiTimer = eventDelay(TSUNAMI_MIN, TSUNAMI_MAX);
+let cats = [];                  // 고양이 인스턴스들 { x, y, dir, state: 'walk'|'groom', timer, groomTimer, el }
+let catTimer = eventDelay(CAT_MIN, CAT_MAX);
+let abduct = 0;                 // UFO 납치 시간 (초) — 0보다 크면 조작 불가
 const MAX_BULLETS = 60;         // 풀 크기 = 최대 활성 총알 수 (어려움 기준)
 const INVULN_SECONDS = 1.5;
 
@@ -1793,14 +1940,47 @@ function b200Svg() {
   return svg;
 }
 
+// 아레나 가장자리의 랜덤 점 — 대각선 경로 생성용 (랜덤 점 ↔ 현재 플레이어 위치를 잇는 직선)
+function randomEdgePoint() {
+  const side = Math.floor(Math.random() * 4);
+  if (side === 0) return { x: Math.random() * arenaW, y: 0 };
+  if (side === 1) return { x: arenaW, y: Math.random() * arenaH };
+  if (side === 2) return { x: Math.random() * arenaW, y: arenaH };
+  return { x: 0, y: Math.random() * arenaH };
+}
+
 function spawnCarrier() {
-  const y = CARRIER_Y_MIN + Math.random() * (CARRIER_Y_MAX - CARRIER_Y_MIN);
-  const dir = Math.random() < 0.5 ? 1 : -1;
+  // 가로/대각 랜덤: 대각선은 랜덤 엣지 점과 현재 플레이어 위치를 잇는 직선을 따라 횡단 (예측 불가)
+  const diag = Math.random() < 0.5;
+  let x, y, dx, dy;
+  if (diag) {
+    const R = randomEdgePoint();
+    const vx = player.x - R.x;
+    const vy = player.y - R.y;
+    const len = Math.hypot(vx, vy) || 1;
+    dx = vx / len;
+    dy = vy / len;
+    x = R.x - dx * 140;
+    y = R.y - dy * 140;
+  } else {
+    dy = 0;
+    dx = Math.random() < 0.5 ? 1 : -1;
+    y = CARRIER_Y_MIN + Math.random() * (CARRIER_Y_MAX - CARRIER_Y_MIN);
+    x = dx > 0 ? -50 : arenaW + 50;
+  }
   const laserEl = document.createElement('div');
   laserEl.className = 'carrier-laser';
-  laserEl.style.top = y + 'px';
+  if (diag) {
+    // 대각선 경로 예고: 현재 플레이어 위치를 지나는 회전 레이저 선
+    laserEl.style.width = '1400px';
+    laserEl.style.left = '0px';
+    laserEl.style.transformOrigin = '0 0';
+    laserEl.style.transform = 'translate3d(' + player.x + 'px,' + player.y + 'px,0) rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI) + 'deg)';
+  } else {
+    laserEl.style.top = y + 'px';
+  }
   arenaEl.appendChild(laserEl);
-  const cr = { x: 0, y: y, dir: dir, state: 'warn', timer: CARRIER_WARN, blastTimer: 0, el: null, laserEl: laserEl };
+  const cr = { x: x, y: y, dx: dx, dy: dy, diag: diag, state: 'warn', timer: CARRIER_WARN, blastTimer: 0, el: null, laserEl: laserEl };
   carriers.push(cr);
   showToast('✈️ B200 접근!');
   vibrate(50);
@@ -1810,18 +1990,26 @@ function startCarrierFly(cr) {
   const el = document.createElement('div');
   el.className = 'carrier';
   const svg = b200Svg();
-  if (cr.dir < 0) svg.classList.add('carrier-left');
+  if (cr.dx < 0) svg.classList.add('carrier-left');
   el.appendChild(svg);
   arenaEl.appendChild(el);
   cr.el = el;
-  cr.x = cr.dir > 0 ? -50 : arenaW + 50;
   cr.state = 'fly';
   cr.blastTimer = 0.25;
   syncCarrierEl(cr);
 }
 
 function syncCarrierEl(cr) {
-  if (cr.el) cr.el.style.transform = 'translate3d(' + cr.x + 'px,' + (cr.y - 14) + 'px,0)';
+  if (!cr.el) return;
+  if (cr.diag) {
+    // 비행 방향으로 기울임 (좌측 진행 시 미러 + 회전으로 비행기 방향 유지)
+    const deg = cr.dx < 0
+      ? Math.atan2(-cr.dy, -cr.dx) * 180 / Math.PI
+      : Math.atan2(cr.dy, cr.dx) * 180 / Math.PI;
+    cr.el.style.transform = 'translate3d(' + (cr.x - 42) + 'px,' + (cr.y - 14) + 'px,0) rotate(' + deg + 'deg)';
+  } else {
+    cr.el.style.transform = 'translate3d(' + cr.x + 'px,' + (cr.y - 14) + 'px,0)';
+  }
 }
 
 function spawnBlast(cr) {
@@ -1894,24 +2082,48 @@ function samuraiSvg() {
 }
 
 function spawnSamurai() {
-  const y = SAMURAI_Y_MIN + Math.random() * (SAMURAI_Y_MAX - SAMURAI_Y_MIN);
-  const dir = Math.random() < 0.5 ? 1 : -1;
+  // 가로/대각 랜덤: 대각선은 랜덤 엣지 점과 현재 플레이어 위치를 잇는 직선 — 그 끝에서 발도 (예측 불가)
+  const diag = Math.random() < 0.5;
+  let x, y, dx, dy;
+  if (diag) {
+    const R = randomEdgePoint();
+    const vx = player.x - R.x;
+    const vy = player.y - R.y;
+    const len = Math.hypot(vx, vy) || 1;
+    dx = vx / len;
+    dy = vy / len;
+    x = R.x - dx * 100;
+    y = R.y - dy * 100;
+  } else {
+    dy = 0;
+    dx = Math.random() < 0.5 ? 1 : -1;
+    y = SAMURAI_Y_MIN + Math.random() * (SAMURAI_Y_MAX - SAMURAI_Y_MIN);
+    x = dx > 0 ? 14 : arenaW - 104;
+  }
   const el = document.createElement('div');
   el.className = 'samurai';
   const svg = samuraiSvg();
-  if (dir < 0) svg.classList.add('samurai-left');
+  if (dx < 0) svg.classList.add('samurai-left');
   el.appendChild(svg);
   const charge = document.createElement('div');
   charge.className = 'samurai-charge';
   el.appendChild(charge);
-  el.style.transform = 'translate3d(' + (dir > 0 ? 14 : arenaW - 104) + 'px,' + (y - 40) + 'px,0)';
+  el.style.transform = 'translate3d(' + (diag ? x - 45 : x) + 'px,' + (y - 40) + 'px,0)';
   arenaEl.appendChild(el);
   el.classList.add('charging');
   const lineEl = document.createElement('div');
   lineEl.className = 'slash-line';
-  lineEl.style.top = y + 'px';
+  if (diag) {
+    // 대각선 발도 예고: 현재 플레이어 위치를 지나는 회전 선
+    lineEl.style.width = '1400px';
+    lineEl.style.left = '0px';
+    lineEl.style.transformOrigin = '0 0';
+    lineEl.style.transform = 'translate3d(' + player.x + 'px,' + player.y + 'px,0) rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI) + 'deg)';
+  } else {
+    lineEl.style.top = y + 'px';
+  }
   arenaEl.appendChild(lineEl);
-  const sm = { x: dir > 0 ? 14 : arenaW - 104, y: y, dir: dir, state: 'stance', timer: SAMURAI_WARN, el: el, lineEl: lineEl, waveEl: null };
+  const sm = { x: x, y: y, dx: dx, dy: dy, diag: diag, state: 'stance', timer: SAMURAI_WARN, el: el, lineEl: lineEl, waveEl: null };
   samurais.push(sm);
   showToast('⚔️ 사무라이 등장!');
   vibrate(30);
@@ -1937,16 +2149,29 @@ function startSlash(sm) {
   if (sm.lineEl) { sm.lineEl.remove(); sm.lineEl = null; }
   const el = document.createElement('div');
   el.className = 'slash-wave';
-  el.appendChild(slashWaveSvg());
-  if (sm.dir < 0) el.firstChild.classList.add('samurai-left');
-  el.style.transform = 'translate3d(' + (sm.x + sm.dir * 20 - 17) + 'px,' + (sm.y - 9) + 'px,0)';
+  const wave = slashWaveSvg();
+  if (sm.dx < 0) wave.classList.add('samurai-left');
+  el.appendChild(wave);
+  sm.x += sm.dx * 20;
+  sm.y += sm.dy * 20;
+  el.style.transform = waveTransform(sm);
   arenaEl.appendChild(el);
   sm.waveEl = el;
-  sm.x = sm.x + sm.dir * 20;
   const cur = sm;
   setTimeout(function() {
     if (cur.el) { cur.el.remove(); cur.el = null; }
   }, 400);
+}
+
+// 검기/비행체 방향 정렬 트랜스폼 — 좌측 진행 시 미러 + 회전으로 방향 유지
+function waveTransform(sm) {
+  if (sm.diag) {
+    const deg = sm.dx < 0
+      ? Math.atan2(-sm.dy, -sm.dx) * 180 / Math.PI
+      : Math.atan2(sm.dy, sm.dx) * 180 / Math.PI;
+    return 'translate3d(' + (sm.x - 17) + 'px,' + (sm.y - 9) + 'px,0) rotate(' + deg + 'deg)';
+  }
+  return 'translate3d(' + (sm.x - 17) + 'px,' + (sm.y - 9) + 'px,0)';
 }
 
 function updateSamurai(sm, dt) {
@@ -1954,29 +2179,510 @@ function updateSamurai(sm, dt) {
     sm.timer -= dt;
     if (sm.timer <= 0) startSlash(sm);
   } else if (sm.state === 'slash') {
-    sm.x += sm.dir * SLASH_SPEED * dt;
+    sm.x += sm.dx * SLASH_SPEED * dt;
+    sm.y += sm.dy * SLASH_SPEED * dt;
     if (sm.waveEl) {
-      sm.waveEl.style.transform = 'translate3d(' + (sm.x - 17) + 'px,' + (sm.y - 9) + 'px,0)';
+      sm.waveEl.style.transform = waveTransform(sm);
       if (invuln <= 0 && Math.hypot(player.x - sm.x, player.y - sm.y) < SLASH_R + HIT_RX) {
         hitPlayer(null);
         if (phase !== 'playing') return;
       }
       for (let i = 0; i < MAX_BULLETS; i++) {
         const b = bullets[i];
-        if (b.active && Math.abs(b.x - sm.x) < 30 && Math.abs(b.y - sm.y) < SLASH_CUT) {
+        if (!b.active) continue;
+        // 검기 진행 방향 전후 30px 밴드 + 경로로부터 수직 거리 (가로/대각 공통)
+        const along = (b.x - sm.x) * sm.dx + (b.y - sm.y) * sm.dy;
+        const perp = Math.abs((b.x - sm.x) * -sm.dy + (b.y - sm.y) * sm.dx);
+        if (Math.abs(along) < 30 && perp < SLASH_CUT) {
           b.active = false;
           activeCount--;
           b.el.style.display = 'none';
         }
       }
     }
-    if ((sm.dir > 0 && sm.x > arenaW + 40) || (sm.dir < 0 && sm.x < -40)) {
+    if (sm.x < -80 || sm.x > arenaW + 80 || sm.y < -80 || sm.y > arenaH + 80) {
       clearSamurai(sm);
     }
   }
 }
 
+// ═══════════════════════════════════════════
+// 로봇청소기 (어려움 전용) — 아무렇게나 굴러다니며 총알 흡입, 부딪히면 피해
+// ═══════════════════════════════════════════
+function resetVacuums() {
+  for (const v of vacuums) if (v.el) v.el.remove();
+  vacuums = [];
+  vacuumTimer = eventDelay(VACUUM_MIN, VACUUM_MAX);
+}
+
+function vacuumSvg() {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 56 56');
+  svg.innerHTML =
+    '<circle cx="28" cy="28" r="24" fill="#8899aa" stroke="#22303c" stroke-width="2"/>' +
+    '<circle cx="28" cy="28" r="17" fill="#b6c5d4" stroke="#22303c" stroke-width="1.5"/>' +
+    '<circle cx="28" cy="28" r="5" fill="#22303c"/>' +
+    '<path d="M4 28 Q10 20 16 28" stroke="#22303c" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+    '<path d="M40 28 Q46 20 52 28" stroke="#22303c" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+    '<rect x="20" y="12" width="16" height="4" rx="2" fill="#ffd23e" stroke="#22303c" stroke-width="1"/>';
+  return svg;
+}
+
+function spawnVacuum() {
+  const side = Math.floor(Math.random() * 4);
+  const m = 34;
+  let x, y;
+  if (side === 0) { x = m + Math.random() * Math.max(0, arenaW - 2 * m); y = -30; }
+  else if (side === 1) { x = arenaW + 30; y = m + Math.random() * Math.max(0, arenaH - 2 * m); }
+  else if (side === 2) { x = m + Math.random() * Math.max(0, arenaW - 2 * m); y = arenaH + 30; }
+  else { x = -30; y = m + Math.random() * Math.max(0, arenaH - 2 * m); }
+  const ang = Math.random() * Math.PI * 2;
+  const el = document.createElement('div');
+  el.className = 'vacuum';
+  el.appendChild(vacuumSvg());
+  arenaEl.appendChild(el);
+  vacuums.push({ x: x, y: y, vx: Math.cos(ang) * VACUUM_SPEED, vy: Math.sin(ang) * VACUUM_SPEED, timer: VACUUM_DURATION, el: el });
+  showToast('🤖 로봇청소기 등장!');
+}
+
+function updateVacuum(v, dt) {
+  v.timer -= dt;
+  if (v.timer <= 0) { clearVacuum(v); return; }
+  v.x += v.vx * dt;
+  v.y += v.vy * dt;
+  if (v.x < 24) { v.x = 24; v.vx = Math.abs(v.vx); }
+  if (v.x > arenaW - 24) { v.x = arenaW - 24; v.vx = -Math.abs(v.vx); }
+  if (v.y < 24) { v.y = 24; v.vy = Math.abs(v.vy); }
+  if (v.y > arenaH - 24) { v.y = arenaH - 24; v.vy = -Math.abs(v.vy); }
+  if (v.el) v.el.style.transform = 'translate3d(' + (v.x - 28) + 'px,' + (v.y - 28) + 'px,0)';
+  // 흡입: 반경 내 총알 제거
+  for (let i = 0; i < MAX_BULLETS; i++) {
+    const b = bullets[i];
+    if (b.active && Math.hypot(b.x - v.x, b.y - v.y) < VACUUM_R + BULLET_R) {
+      b.active = false;
+      activeCount--;
+      b.el.style.display = 'none';
+    }
+  }
+  // 집사와 부딪히면 데미지 (무적이면 무시)
+  if (invuln <= 0 && Math.hypot(player.x - v.x, player.y - v.y) < VACUUM_R + PLAYER_R) {
+    hitPlayer(null);
+    if (phase !== 'playing') return;
+  }
+}
+
+function clearVacuum(v) {
+  if (v.el) { v.el.remove(); v.el = null; }
+  const idx = vacuums.indexOf(v);
+  if (idx >= 0) vacuums.splice(idx, 1);
+}
+
+// ═══════════════════════════════════════════
+// 지진 (어려움 전용) — 화면 흔들림 + 총알 궤적 랜덤 휘어짐
+// ═══════════════════════════════════════════
+function resetQuake() {
+  if (quake) quake = null;
+  arenaEl.classList.remove('quake');
+  quakeTimer = eventDelay(QUAKE_MIN, QUAKE_MAX);
+}
+
+function spawnQuake() {
+  quake = { timer: QUAKE_DURATION };
+  arenaEl.classList.remove('quake');
+  void arenaEl.offsetWidth;
+  arenaEl.classList.add('quake');
+  showToast('🌏 지진!!');
+  vibrate(100);
+}
+
+// ═══════════════════════════════════════════
+// UFO (어려움 전용) — 광선으로 총알 흡수, 플레이어는 잠시 납치
+// ═══════════════════════════════════════════
+function resetUfos() {
+  for (const u of ufos) {
+    if (u.warnEl) u.warnEl.remove();
+    if (u.beamEl) u.beamEl.remove();
+    if (u.el) u.el.remove();
+  }
+  ufos = [];
+  ufoTimer = eventDelay(UFO_MIN, UFO_MAX);
+}
+
+function ufoSvg() {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 64 30');
+  svg.innerHTML =
+    '<ellipse cx="32" cy="23" rx="29" ry="7" fill="#9aa8b8" stroke="#2b3440" stroke-width="1.5"/>' +
+    '<ellipse cx="32" cy="20" rx="16" ry="4.5" fill="#c2cfdd" stroke="#2b3440" stroke-width="1.2"/>' +
+    '<path d="M26 19 Q32 3 38 19 Z" fill="#8fd0e0" stroke="#2b3440" stroke-width="1.2"/>' +
+    '<circle cx="19" cy="24" r="1.6" fill="#ffd23e"/>' +
+    '<circle cx="27" cy="26" r="1.6" fill="#ffd23e"/>' +
+    '<circle cx="35" cy="26" r="1.6" fill="#ffd23e"/>' +
+    '<circle cx="43" cy="24" r="1.6" fill="#ffd23e"/>';
+  return svg;
+}
+
+function spawnUfo() {
+  const ux = 60 + Math.random() * Math.max(0, arenaW - 120);
+  const warnEl = document.createElement('div');
+  warnEl.className = 'ufo-warn';
+  warnEl.style.left = ux + 'px';
+  arenaEl.appendChild(warnEl);
+  const beamEl = document.createElement('div');
+  beamEl.className = 'ufo-beam';
+  beamEl.style.left = ux + 'px';
+  arenaEl.appendChild(beamEl);
+  const el = document.createElement('div');
+  el.className = 'ufo';
+  el.appendChild(ufoSvg());
+  arenaEl.appendChild(el);
+  ufos.push({ x: ux, y: -30, state: 'warn', timer: UFO_WARN, warnEl: warnEl, beamEl: beamEl, el: el });
+  showToast('🛸 UFO가 나타났어요!');
+}
+
+function updateUfo(u, dt) {
+  u.timer -= dt;
+  if (u.state === 'warn') {
+    // UFO가 천천히 내려와 광선 준비
+    u.y += 45 * dt;
+    if (u.el) u.el.style.transform = 'translate3d(' + (u.x - 32) + 'px,' + (u.y - 15) + 'px,0)';
+    if (u.timer <= 0) {
+      u.state = 'beam';
+      u.timer = UFO_DURATION;
+      if (u.warnEl) { u.warnEl.remove(); u.warnEl = null; }
+      if (u.beamEl) u.beamEl.classList.add('on');
+      showToast('📡 납치 광선!');
+    }
+  } else {
+    // 광선: 지나가는 총알 흡수
+    for (let i = 0; i < MAX_BULLETS; i++) {
+      const b = bullets[i];
+      if (b.active && Math.abs(b.x - u.x) < UFO_BEAM_W / 2 && b.y > u.y + 20) {
+        b.active = false;
+        activeCount--;
+        b.el.style.display = 'none';
+      }
+    }
+    // 플레이어가 광선 안 → 납치 (무적이면 면역)
+    if (abduct <= 0 && invuln <= 0 && Math.abs(player.x - u.x) < UFO_BEAM_W / 2) {
+      abduct = UFO_ABDUCT;
+      showToast('🛸 납치됨!!');
+      vibrate(60);
+    }
+    if (u.timer <= 0) clearUfo(u);
+  }
+}
+
+function clearUfo(u) {
+  if (u.warnEl) { u.warnEl.remove(); u.warnEl = null; }
+  if (u.beamEl) { u.beamEl.remove(); u.beamEl = null; }
+  if (u.el) { u.el.remove(); u.el = null; }
+  const idx = ufos.indexOf(u);
+  if (idx >= 0) ufos.splice(idx, 1);
+}
+
+// ═══════════════════════════════════════════
+// 비둘기 (어려움 전용) — 가로/대각으로 지나가며 투하물 투하
+// ═══════════════════════════════════════════
+function resetPigeons() {
+  for (const p of pigeons) {
+    if (p.warnEl) p.warnEl.remove();
+    if (p.el) p.el.remove();
+    if (p.poopEl) p.poopEl.remove();
+    if (p.blastEl) p.blastEl.remove();
+  }
+  pigeons = [];
+  pigeonTimer = eventDelay(PIGEON_MIN, PIGEON_MAX);
+}
+
+function pigeonSvg() {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 40 30');
+  svg.innerHTML =
+    '<ellipse cx="18" cy="18" rx="14" ry="9" fill="#8b9bb0" stroke="#3a4654" stroke-width="1.5"/>' +
+    '<circle cx="31" cy="11" r="6" fill="#9fb0c4" stroke="#3a4654" stroke-width="1.5"/>' +
+    '<path d="M36 10 L40 12 L36 13.5 Z" fill="#e8b04b" stroke="#3a4654" stroke-width="1"/>' +
+    '<circle cx="32" cy="9.5" r="1.3" fill="#22303c"/>' +
+    '<path d="M6 16 Q0 10 6 5 Q8 12 8 16 Z" fill="#6d7d90" stroke="#3a4654" stroke-width="1"/>' +
+    '<path d="M14 12 Q20 3 28 10 Q22 16 14 12 Z" fill="#a9bacb" stroke="#3a4654" stroke-width="1"/>' +
+    '<path d="M17 24 L19 30 L16 26 Z" fill="#e8924b" stroke="#3a4654" stroke-width="1"/>';
+  return svg;
+}
+
+function poopSvg() {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 20 24');
+  svg.innerHTML =
+    '<circle cx="10" cy="20" r="6.5" fill="#7c5c3a" stroke="#4a3620" stroke-width="1.2"/>' +
+    '<circle cx="6.5" cy="14" r="4.5" fill="#8f6a44" stroke="#4a3620" stroke-width="1.2"/>' +
+    '<circle cx="13.5" cy="14" r="4.5" fill="#8f6a44" stroke="#4a3620" stroke-width="1.2"/>' +
+    '<path d="M10 9.5 Q7 4.5 10 1.5 Q13 4.5 10 9.5" fill="#9c744a" stroke="#4a3620" stroke-width="1"/>';
+  return svg;
+}
+
+function spawnPigeon() {
+  // 가로/대각 랜덤 (B200처럼 플레이어 예측 불가)
+  const diag = Math.random() < 0.5;
+  let x, y, dx, dy;
+  if (diag) {
+    const R = randomEdgePoint();
+    const vx = player.x - R.x;
+    const vy = player.y - R.y;
+    const len = Math.hypot(vx, vy) || 1;
+    dx = vx / len;
+    dy = vy / len;
+    x = R.x - dx * 60;
+    y = R.y - dy * 60;
+  } else {
+    dy = 0;
+    dx = Math.random() < 0.5 ? 1 : -1;
+    y = PIGEON_Y_MIN + Math.random() * (PIGEON_Y_MAX - PIGEON_Y_MIN);
+    x = dx > 0 ? -30 : arenaW + 30;
+  }
+  const warnEl = document.createElement('div');
+  warnEl.className = 'pigeon-warn';
+  if (diag) {
+    warnEl.style.width = '1400px';
+    warnEl.style.left = '0px';
+    warnEl.style.transformOrigin = '0 0';
+    warnEl.style.transform = 'translate3d(' + player.x + 'px,' + player.y + 'px,0) rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI) + 'deg)';
+  } else {
+    warnEl.style.top = y + 'px';
+  }
+  arenaEl.appendChild(warnEl);
+  const el = document.createElement('div');
+  el.className = 'pigeon';
+  const svg = pigeonSvg();
+  if (dx < 0) svg.classList.add('carrier-left');
+  el.appendChild(svg);
+  arenaEl.appendChild(el);
+  pigeons.push({ x: x, y: y, dx: dx, dy: dy, diag: diag, state: 'warn', timer: PIGEON_WARN, dropX: 0, dropped: false, poopY: 0, blastTimer: 0, warnEl: warnEl, el: el, poopEl: null, blastEl: null });
+  showToast('🐦 비둘기 출몰!');
+}
+
+function startPigeonFly(p) {
+  p.state = 'fly';
+  if (p.warnEl) { p.warnEl.remove(); p.warnEl = null; }
+  // 진행 도중 랜덤 위치에서 투하
+  p.dropX = 100 + Math.random() * Math.max(0, arenaW - 200);
+}
+
+function updatePigeon(p, dt) {
+  if (p.state === 'warn') {
+    p.timer -= dt;
+    if (p.timer <= 0) startPigeonFly(p);
+  } else if (p.state === 'fly') {
+    p.x += p.dx * PIGEON_SPEED * dt;
+    p.y += p.dy * PIGEON_SPEED * dt;
+    if (p.el) {
+      if (p.diag) {
+        const deg = p.dx < 0
+          ? Math.atan2(-p.dy, -p.dx) * 180 / Math.PI
+          : Math.atan2(p.dy, p.dx) * 180 / Math.PI;
+        p.el.style.transform = 'translate3d(' + (p.x - 20) + 'px,' + (p.y - 15) + 'px,0) rotate(' + deg + 'deg)';
+      } else {
+        p.el.style.transform = 'translate3d(' + p.x + 'px,' + (p.y - 15) + 'px,0)';
+      }
+    }
+    // 투하 지점 도달 → 투하물 낙하
+    if (!p.dropped && Math.abs(p.x - p.dropX) < 8) {
+      p.dropped = true;
+      p.poopY = p.y;
+      const poopEl = document.createElement('div');
+      poopEl.className = 'poop';
+      poopEl.appendChild(poopSvg());
+      arenaEl.appendChild(poopEl);
+      p.poopEl = poopEl;
+      showToast('🐦 투하물!');
+    }
+    if (p.poopEl) {
+      p.poopY += POOP_FALL * dt;
+      p.poopEl.style.transform = 'translate3d(' + p.dropX + 'px,' + p.poopY + 'px,0)';
+      if (p.poopY >= arenaH - 8) {
+        p.poopEl.remove();
+        p.poopEl = null;
+        const blastEl = document.createElement('div');
+        blastEl.className = 'poop-blast';
+        blastEl.style.left = p.dropX + 'px';
+        blastEl.style.top = (arenaH - 8) + 'px';
+        arenaEl.appendChild(blastEl);
+        p.blastEl = blastEl;
+        p.blastTimer = 0.5;
+      }
+    }
+    if (p.blastEl) {
+      p.blastTimer -= dt;
+      if (p.blastTimer <= 0) { p.blastEl.remove(); p.blastEl = null; }
+      if (invuln <= 0 && Math.abs(player.x - p.dropX) < POOP_R && Math.abs(player.y - (arenaH - 8)) < POOP_R) {
+        hitPlayer(null);
+        if (phase !== 'playing') return;
+      }
+    }
+    if (p.x < -80 || p.x > arenaW + 80 || p.y < -80 || p.y > arenaH + 80) clearPigeon(p);
+  }
+}
+
+function clearPigeon(p) {
+  if (p.warnEl) { p.warnEl.remove(); p.warnEl = null; }
+  if (p.el) { p.el.remove(); p.el = null; }
+  if (p.poopEl) { p.poopEl.remove(); p.poopEl = null; }
+  if (p.blastEl) { p.blastEl.remove(); p.blastEl = null; }
+  const idx = pigeons.indexOf(p);
+  if (idx >= 0) pigeons.splice(idx, 1);
+}
+
+// ═══════════════════════════════════════════
+// 쓰나미 (어려움 전용) — 화면을 쓸고 지나가는 파도
+// ═══════════════════════════════════════════
+function resetTsunamis() {
+  for (const t of tsunamis) if (t.el) t.el.remove();
+  tsunamis = [];
+  tsunamiTimer = eventDelay(TSUNAMI_MIN, TSUNAMI_MAX);
+}
+
+function tsunamiSvg() {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 110 100');
+  svg.setAttribute('preserveAspectRatio', 'none');
+  svg.innerHTML =
+    '<defs><linearGradient id="tsunamig" x1="0" y1="0" x2="1" y2="0">' +
+    '<stop offset="0" stop-color="rgba(37,99,235,0)"/>' +
+    '<stop offset="0.35" stop-color="rgba(37,99,235,.55)"/>' +
+    '<stop offset="0.8" stop-color="rgba(59,130,246,.75)"/>' +
+    '<stop offset="1" stop-color="rgba(96,165,250,.9)"/></linearGradient></defs>' +
+    '<path d="M110 100 L110 22 Q99 10 88 22 Q77 34 66 22 Q55 10 44 22 Q33 34 22 22 Q11 10 0 22 L0 100 Z" fill="url(#tsunamig)"/>' +
+    '<path d="M110 22 Q99 10 88 22 Q77 34 66 22 Q55 10 44 22 Q33 34 22 22 Q11 10 0 22" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="4"/>';
+  return svg;
+}
+
+function spawnTsunami() {
+  const dir = Math.random() < 0.5 ? 1 : -1;
+  const x = dir > 0 ? -TSUNAMI_W : arenaW + TSUNAMI_W;
+  const el = document.createElement('div');
+  el.className = 'tsunami';
+  el.appendChild(tsunamiSvg());
+  el.style.width = TSUNAMI_W + 'px';
+  el.style.height = Math.round(arenaH * 0.55) + 'px';
+  el.style.transform = 'translate3d(' + x + 'px,0,0)';
+  arenaEl.appendChild(el);
+  tsunamis.push({ x: x, dir: dir, timer: TSUNAMI_WARN, el: el, yBot: arenaH * 0.55 });
+  showToast('🌊 쓰나미 경보!!');
+}
+
+function updateTsunami(t, dt) {
+  if (t.timer > 0) {
+    t.timer -= dt;
+    return;
+  }
+  t.x += t.dir * TSUNAMI_SPEED * dt;
+  if (t.el) t.el.style.transform = 'translate3d(' + t.x + 'px,0,0)';
+  if (invuln <= 0 && Math.abs(player.x - t.x) < TSUNAMI_W / 2 + PLAYER_R && player.y < t.yBot) {
+    hitPlayer(null);
+    if (phase !== 'playing') return;
+  }
+  if ((t.dir > 0 && t.x > arenaW + TSUNAMI_W) || (t.dir < 0 && t.x < -TSUNAMI_W)) clearTsunami(t);
+}
+
+function clearTsunami(t) {
+  if (t.el) { t.el.remove(); t.el = null; }
+  const idx = tsunamis.indexOf(t);
+  if (idx >= 0) tsunamis.splice(idx, 1);
+}
+
+// ═══════════════════════════════════════════
+// 고양이 (어려움 전용) — 총알을 쳐내며 가로지름 (플레이어에게 무해)
+// ═══════════════════════════════════════════
+function resetCats() {
+  for (const c of cats) if (c.el) c.el.remove();
+  cats = [];
+  catTimer = eventDelay(CAT_MIN, CAT_MAX);
+}
+
+function catSvg() {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 44 26');
+  svg.innerHTML =
+    '<ellipse cx="18" cy="17" rx="14" ry="7" fill="#d9a066" stroke="#6b4523" stroke-width="1.5"/>' +
+    '<circle cx="32" cy="12" r="6" fill="#e3b37a" stroke="#6b4523" stroke-width="1.5"/>' +
+    '<path d="M30 6.5 L28 1 L33 5 Z" fill="#e3b37a" stroke="#6b4523" stroke-width="1.2"/>' +
+    '<path d="M35 6.5 L37 1 L33.5 5 Z" fill="#e3b37a" stroke="#6b4523" stroke-width="1.2"/>' +
+    '<circle cx="33" cy="11" r="1.3" fill="#22303c"/>' +
+    '<path d="M33 14 Q35 16 37 15" stroke="#22303c" stroke-width="1.2" fill="none"/>' +
+    '<path d="M28 19 Q38 22 44 18 Q42 26 33 24 Q30 21 28 19 Z" fill="#d9a066" stroke="#6b4523" stroke-width="1.5"/>' +
+    '<rect x="10" y="22" width="3" height="4" rx="1.5" fill="#6b4523"/>' +
+    '<rect x="18" y="22" width="3" height="4" rx="1.5" fill="#6b4523"/>' +
+    '<rect x="26" y="22" width="3" height="4" rx="1.5" fill="#6b4523"/>';
+  return svg;
+}
+
+function spawnCat() {
+  const dir = Math.random() < 0.5 ? 1 : -1;
+  const y = CAT_Y_MIN + Math.random() * (CAT_Y_MAX - CAT_Y_MIN);
+  const x = dir > 0 ? -30 : arenaW + 30;
+  const el = document.createElement('div');
+  el.className = 'cat';
+  const svg = catSvg();
+  if (dir < 0) svg.classList.add('carrier-left');
+  el.appendChild(svg);
+  arenaEl.appendChild(el);
+  cats.push({ x: x, y: y, dir: dir, state: 'walk', timer: 0.5 + Math.random() * 2, groomTimer: 0, el: el });
+  showToast('🐈 고양이 출몰!');
+}
+
+function updateCat(c, dt) {
+  if (c.state === 'walk') {
+    c.x += c.dir * CAT_SPEED * dt;
+    c.timer -= dt;
+    if (c.timer <= 0) {
+      // 70% 확률로 잠깐 멈춰 그루밍
+      if (Math.random() < 0.7) {
+        c.state = 'groom';
+        c.groomTimer = 1 + Math.random() * 1.2;
+        if (c.el) c.el.classList.add('grooming');
+      } else {
+        c.timer = 1.5 + Math.random() * 2.5;
+      }
+    }
+  } else {
+    c.groomTimer -= dt;
+    if (c.groomTimer <= 0) {
+      c.state = 'walk';
+      c.timer = 1 + Math.random() * 3;
+      if (c.el) c.el.classList.remove('grooming');
+    }
+  }
+  if (c.el) c.el.style.transform = 'translate3d(' + c.x + 'px,' + (c.y - 13) + 'px,0)';
+  // 근처 총알을 앞발로 쳐냄 — 위로 튕겨 화면 밖으로 (경로 청소)
+  for (let i = 0; i < MAX_BULLETS; i++) {
+    const b = bullets[i];
+    if (b.active && Math.hypot(b.x - c.x, b.y - c.y) < CAT_CLEAR_R) {
+      b.vy = -Math.abs(b.vy) - 40;
+      b.vx += (Math.random() - 0.5) * 70;
+    }
+  }
+  if ((c.dir > 0 && c.x > arenaW + 40) || (c.dir < 0 && c.x < -40)) clearCat(c);
+}
+
+function clearCat(c) {
+  if (c.el) { c.el.remove(); c.el = null; }
+  const idx = cats.indexOf(c);
+  if (idx >= 0) cats.splice(idx, 1);
+}
+
 function updatePlayer(dt) {
+  // UFO 납치: 조작 불가, 위로 끌려올라갔다가 낙하하며 데미지
+  if (abduct > 0) {
+    abduct -= dt;
+    player.y -= 75 * dt;
+    if (player.y < 30) player.y = 30;
+    if (abduct <= 0 && invuln <= 0) {
+      hitPlayer(null);
+      if (phase !== 'playing') return;
+    }
+    player.x = clamp(player.x, PLAYER_R, Math.max(PLAYER_R, arenaW - PLAYER_R));
+    player.y = clamp(player.y, PLAYER_R, Math.max(PLAYER_R, arenaH - PLAYER_R));
+    return;
+  }
   const minX = PLAYER_R;
   const minY = PLAYER_R;
   const maxX = Math.max(minX, arenaW - PLAYER_R);
@@ -2105,7 +2811,8 @@ function update(dt) {
         cr.timer -= dt;
         if (cr.timer <= 0) startCarrierFly(cr);
       } else if (cr.state === 'fly') {
-        cr.x += cr.dir * CARRIER_SPEED * dt;
+        cr.x += cr.dx * CARRIER_SPEED * dt;
+        cr.y += cr.dy * CARRIER_SPEED * dt;
         syncCarrierEl(cr);
         cr.blastTimer -= dt;
         if (cr.blastTimer <= 0) {
@@ -2113,7 +2820,7 @@ function update(dt) {
           if (phase !== 'playing') return;
           cr.blastTimer = BLAST_INTERVAL;
         }
-        if ((cr.dir > 0 && cr.x > arenaW + 50) || (cr.dir < 0 && cr.x < -50)) {
+        if (cr.x < -120 || cr.x > arenaW + 120 || cr.y < -120 || cr.y > arenaH + 120) {
           clearCarrier(cr);
         }
       }
@@ -2129,6 +2836,96 @@ function update(dt) {
     }
     for (let i = samurais.length - 1; i >= 0; i--) {
       updateSamurai(samurais[i], dt);
+      if (phase !== 'playing') return;
+    }
+  }
+
+  // 로봇청소기 (어려움 전용): 아무렇게나 굴러다니며 총알 흡입
+  if (difficulty === 'hard') {
+    vacuumTimer -= dt;
+    if (vacuumTimer <= 0) {
+      spawnVacuum();
+      vacuumTimer = eventDelay(VACUUM_MIN, VACUUM_MAX);
+    }
+    for (let i = vacuums.length - 1; i >= 0; i--) {
+      updateVacuum(vacuums[i], dt);
+      if (phase !== 'playing') return;
+    }
+  }
+
+  // 지진 (어려움 전용): 전역 흔들림 + 총알 궤적 휘어짐 (활성 중이면 재발생만 연기)
+  if (difficulty === 'hard') {
+    quakeTimer -= dt;
+    if (quakeTimer <= 0) {
+      if (!quake) spawnQuake();
+      quakeTimer = eventDelay(QUAKE_MIN, QUAKE_MAX);
+    }
+    if (quake) {
+      quake.timer -= dt;
+      for (let i = 0; i < MAX_BULLETS; i++) {
+        const b = bullets[i];
+        if (!b.active) continue;
+        const s = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+        const cur = Math.atan2(b.vy, b.vx);
+        const a = cur + (Math.random() - 0.5) * QUAKE_JITTER * dt * 60;
+        b.vx = Math.cos(a) * s;
+        b.vy = Math.sin(a) * s;
+      }
+      if (quake.timer <= 0) {
+        arenaEl.classList.remove('quake');
+        quake = null;
+      }
+    }
+  }
+
+  // UFO (어려움 전용): 광선으로 총알 흡수 + 플레이어 납치
+  if (difficulty === 'hard') {
+    ufoTimer -= dt;
+    if (ufoTimer <= 0) {
+      spawnUfo();
+      ufoTimer = eventDelay(UFO_MIN, UFO_MAX);
+    }
+    for (let i = ufos.length - 1; i >= 0; i--) {
+      updateUfo(ufos[i], dt);
+      if (phase !== 'playing') return;
+    }
+  }
+
+  // 비둘기 (어려움 전용): 가로/대각으로 지나가며 투하물 투하
+  if (difficulty === 'hard') {
+    pigeonTimer -= dt;
+    if (pigeonTimer <= 0) {
+      spawnPigeon();
+      pigeonTimer = eventDelay(PIGEON_MIN, PIGEON_MAX);
+    }
+    for (let i = pigeons.length - 1; i >= 0; i--) {
+      updatePigeon(pigeons[i], dt);
+      if (phase !== 'playing') return;
+    }
+  }
+
+  // 쓰나미 (어려움 전용): 화면을 쓸고 지나가는 파도
+  if (difficulty === 'hard') {
+    tsunamiTimer -= dt;
+    if (tsunamiTimer <= 0) {
+      spawnTsunami();
+      tsunamiTimer = eventDelay(TSUNAMI_MIN, TSUNAMI_MAX);
+    }
+    for (let i = tsunamis.length - 1; i >= 0; i--) {
+      updateTsunami(tsunamis[i], dt);
+      if (phase !== 'playing') return;
+    }
+  }
+
+  // 고양이 (어려움 전용): 총알을 쳐내며 가로지름 (무해)
+  if (difficulty === 'hard') {
+    catTimer -= dt;
+    if (catTimer <= 0) {
+      spawnCat();
+      catTimer = eventDelay(CAT_MIN, CAT_MAX);
+    }
+    for (let i = cats.length - 1; i >= 0; i--) {
+      updateCat(cats[i], dt);
       if (phase !== 'playing') return;
     }
   }
@@ -2197,6 +2994,8 @@ function finish(winFlag) {
   if (phase === 'over' || phase === 'won') return;
   phase = winFlag ? 'won' : 'over';
   stopLoop();
+  arenaEl.classList.remove('quake');
+  quake = null;
   playerEl.classList.remove('invulnerable');
   if (invulnTimer) { clearTimeout(invulnTimer); invulnTimer = null; }
   clearSave();
@@ -2310,6 +3109,7 @@ function startGame(diff) {
   elapsed = 0;
   lastSec = -1;
   invuln = 0;
+  abduct = 0;
   phase = 'playing';
   createdAt = Date.now();
   spawnTimer = DIFFICULTY_CONFIG[diff].spawnStart;
@@ -2318,6 +3118,12 @@ function startGame(diff) {
   resetItems();
   resetCarrier();
   resetSamurai();
+  resetVacuums();
+  resetQuake();
+  resetUfos();
+  resetPigeons();
+  resetTsunamis();
+  resetCats();
   keyState.up = keyState.down = keyState.left = keyState.right = false;
   showScreen('game');
   updateArenaMetrics();
@@ -2335,6 +3141,7 @@ function resumeFromSave(save) {
   elapsed = save.elapsed;
   lastSec = Math.floor(elapsed);
   invuln = 0;
+  abduct = 0;
   phase = 'playing';
   createdAt = save.createdAt || Date.now();
   spawnTimer = DIFFICULTY_CONFIG[difficulty].spawnStart;
@@ -2343,6 +3150,12 @@ function resumeFromSave(save) {
   resetItems();
   resetCarrier();
   resetSamurai();
+  resetVacuums();
+  resetQuake();
+  resetUfos();
+  resetPigeons();
+  resetTsunamis();
+  resetCats();
   keyState.up = keyState.down = keyState.left = keyState.right = false;
   showScreen('game');
   updateArenaMetrics();
