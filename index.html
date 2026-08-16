@@ -1119,7 +1119,7 @@ button:focus-visible{
       </div>
       <div class="rule-section">
         <h3>📦 아이템</h3>
-        <p>주기적으로 위에서 아이템이 떨어져요. 받으면 🛡️ 쉴드(잠시 무적)나 ❤️ 목숨 +1이 돼요. 목숨이 가득이면 쉴드가 떨어져요. 시간이 지날수록 모든 이벤트 간격이 짧아져요.</p>
+        <p>10초마다 위에서 아이템이 떨어져요. 받으면 🛡️ 쉴드(잠시 무적)나 ❤️ 목숨 +1이 돼요. 목숨이 가득이면 쉴드가 떨어져요. 핵·B200·사무라이는 시간이 지날수록 간격이 짧아져요.</p>
       </div>
       <div class="rule-section">
         <h3>⌨️ 컴퓨터 · 키보드</h3>
@@ -1180,8 +1180,8 @@ const MAX_RAMP = 2.5;           // 상승 한도 (2.5배)
 let elapsed = 0;                // 초 단위 (점수 = 생존 시간, 램프 계산 기준)
 
 let nukeTimer = eventDelay(NUKE_MIN, NUKE_MAX); // 다음 핵까지 남은 시간 (초)           // 하늘에서 떨어지는 핵 미사일 요소
-const ITEM_MIN = 5;             // 공통 최소 간격 (초)
-const ITEM_MAX = 10;            // 공통 최대 간격 (초, 시간에 따라 감소)
+const ITEM_MIN = 10;            // 아이템: 10초 고정 (모든 난이도, 시간에 따라 줄어들지 않음)
+const ITEM_MAX = 10;            // 아이템: 10초 고정
 const ITEM_SPEED = 90;          // 아이템 낙하 속도 (px/s)
 const ITEM_CATCH_R = 34;        // 아이템 획득 판정 반경 (px)
 const SHIELD_SECONDS = 5;       // 쉴드 무적 시간 (초)
