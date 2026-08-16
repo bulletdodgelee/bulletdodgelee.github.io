@@ -520,6 +520,70 @@ body{
 .player.shielded{
   box-shadow:0 0 0 3px rgba(250,204,21,.85),0 0 16px rgba(250,204,21,.6);
 }
+/* B200 항공모함 (어려움 전용) — 레이저 경로 예고 후 폭탄 투하 */
+.carrier-laser{
+  position:absolute;
+  left:0;right:0;
+  height:3px;
+  margin-top:-1px;
+  background:linear-gradient(90deg, transparent 0%, rgba(255,90,60,.95) 20%, rgba(255,200,60,.95) 50%, rgba(255,90,60,.95) 80%, transparent 100%);
+  box-shadow:0 0 14px rgba(255,90,60,.9), 0 0 4px rgba(255,255,255,.7);
+  animation:carrierLaserScan .4s linear infinite;
+  pointer-events:none;
+  z-index:5;
+}
+@keyframes carrierLaserScan{
+  0%,100%{opacity:.55}
+  50%{opacity:1}
+}
+.carrier{
+  position:absolute;
+  left:0;top:0;
+  font-size:30px;line-height:1;
+  filter:drop-shadow(0 0 8px rgba(255,90,60,.95));
+  pointer-events:none;
+  z-index:5;
+}
+.carrier-face{display:inline-block}
+.carrier-left{transform:scaleX(-1)}
+.bomb-laser{
+  position:absolute;
+  top:0;bottom:0;
+  width:2px;
+  background:linear-gradient(180deg, rgba(255,90,60,.95), rgba(255,140,60,.4));
+  box-shadow:0 0 10px rgba(255,90,60,.85);
+  animation:bombLaserBlink .12s linear infinite;
+  pointer-events:none;
+  z-index:4;
+}
+@keyframes bombLaserBlink{
+  0%,100%{opacity:1}
+  50%{opacity:.3}
+}
+.bomb{
+  position:absolute;
+  left:0;top:0;
+  width:24px;height:24px;
+  margin:-12px 0 0 -12px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #999, #2a2a2a 55%, #111);
+  box-shadow:0 0 10px rgba(255,90,60,.55), inset 0 -4px 6px rgba(0,0,0,.7);
+  pointer-events:none;
+  z-index:4;
+}
+.bomb-poof{
+  position:absolute;
+  width:34px;height:34px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(255,180,80,.95), rgba(255,90,60,.4) 55%, transparent 72%);
+  animation:bombPoof .3s ease-out forwards;
+  pointer-events:none;
+  z-index:4;
+}
+@keyframes bombPoof{
+  from{transform:scale(.4);opacity:1}
+  to{transform:scale(1.7);opacity:0}
+}
 .player{
   position:absolute;
   left:0;top:0;
@@ -856,7 +920,7 @@ button:focus-visible{
       </button>
       <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도로 시작">
         <span class="diff-name">어려움</span>
-        <span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄 · ☢️ 핵</span>
+        <span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄 · ☢️ 핵 · ✈️ B200</span>
       </button>
     </div>
 
@@ -926,7 +990,7 @@ button:focus-visible{
     <div class="diff-grid" role="group" aria-label="난이도 선택">
       <button class="diff-btn" data-diff="easy" type="button" aria-label="쉬움 난이도"><span class="diff-name">쉬움</span><span class="diff-desc">천천히 떨어지는 총알 · 최대 32발 · 살짝 휘어요</span></button>
       <button class="diff-btn" data-diff="normal" type="button" aria-label="보통 난이도"><span class="diff-name">보통</span><span class="diff-desc">보통 속도의 총알 · 최대 45발 · 휘는 총알</span></button>
-      <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도"><span class="diff-name">어려움</span><span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄 · ☢️ 핵</span></button>
+      <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도"><span class="diff-name">어려움</span><span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄 · ☢️ 핵 · ✈️ B200</span></button>
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" id="btnCancelDiff" type="button">취소</button>
@@ -1002,6 +1066,10 @@ button:focus-visible{
         <p>랜덤한 위치에 경고 원이 뜨고 3,2,1 카운트다운 뒤 폭발해요. 원 안에 있으면 목숨을 잃으니 카운트다운 동안 꼭 피하세요. 폭발 범위 안의 총알은 함께 사라져요.</p>
       </div>
       <div class="rule-section">
+        <h3>✈️ B200 (어려움 전용)</h3>
+        <p>가끔 레이저가 지나갈 경로를 미리 비추고 B200이 지나가요. 지나가는 동안 폭탄을 떨구니, 세로 예고선이 생기면 그 자리에서 비켜서세요.</p>
+      </div>
+      <div class="rule-section">
         <h3>📦 아이템</h3>
         <p>가끔 위에서 아이템이 떨어져요. 받으면 🛡️ 쉴드(잠시 무적)나 ❤️ 목숨 +1이 돼요. 목숨이 가득이면 쉴드가 떨어져요.</p>
       </div>
@@ -1055,7 +1123,8 @@ const HIT_RX = 5;               // 충돌 판정 가로 반지름 (횡축 완화
 const HIT_RY = 7;               // 충돌 판정 세로 반지름 (관대한 히트박스)
 const BULLET_R = 7;             // 총알 반지름 (14px 원)
 const NUKE_FIRST = 6;           // 어려움: 첫 핵까지 (초)
-const NUKE_INTERVAL = 12;       // 어려움: 이후 핵 간격 (초)
+const NUKE_MIN = 10;            // 어려움: 이후 최소 핵 간격 (초)
+const NUKE_MAX = 20;            // 어려움: 이후 최대 핵 간격 (초)
 const NUKE_WARN = 3;            // 핵 카운트다운 (초)
 const NUKE_RADIUS = 85;         // 핵 폭발 반경 (px)
 let nuke = null;                // 핵 상태 { x, y, timer, state: 'warn'|'blast' }
@@ -1069,8 +1138,23 @@ const ITEM_MAX = 24;            // 이후 최대 간격 (초)
 const ITEM_SPEED = 90;          // 아이템 낙하 속도 (px/s)
 const ITEM_CATCH_R = 34;        // 아이템 획득 판정 반경 (px)
 const SHIELD_SECONDS = 5;       // 쉴드 무적 시간 (초)
+const CARRIER_FIRST = 15;        // 어려움: 첫 B200까지 (초)
+const CARRIER_MIN = 15;          // 이후 최소 간격 (초)
+const CARRIER_MAX = 25;          // 이후 최대 간격 (초)
+const CARRIER_WARN = 2.5;        // 레이저 경로 예고 시간 (초)
+const CARRIER_SPEED = 260;       // 횡단 속도 (px/s)
+const CARRIER_Y_MIN = 50;        // 비행 레인 y 최소
+const CARRIER_Y_MAX = 150;       // 비행 레인 y 최대
+const CARRIER_BOMB_MIN = 2;      // 투하 폭탄 최소
+const CARRIER_BOMB_MAX = 4;      // 투하 폭탄 최대
+const BOMB_WARN = 0.5;           // 폭탄 낙하 예고 (세로 레이저, 초)
+const BOMB_SPEED = 180;          // 폭탄 낙하 속도 (px/s)
+const BOMB_R = 12;               // 폭탄 반지름 (24px 원)
 let item = null;                // 아이템 { x, y, vy, type: 'shield'|'life', el }
 let itemTimer = ITEM_FIRST;     // 다음 아이템까지 남은 시간 (초)
+let carrier = null;             // B200 { x, y, dir, state: 'warn'|'fly', timer, bombsLeft, bombTimer, el, laserEl }
+let carrierTimer = CARRIER_FIRST;
+let bombs = [];                 // 폭탄 { x, y, vy, state: 'warn'|'fall', timer, el, laserEl }
 const MAX_BULLETS = 60;         // 풀 크기 = 최대 활성 총알 수 (어려움 기준)
 const INVULN_SECONDS = 1.5;
 const RAMP_RATE = 0.02;         // 초당 +2% 난이도 상승
@@ -1513,6 +1597,10 @@ function detonateNuke() {
       b.el.style.display = 'none';
     }
   }
+  // 폭발 범위 내 폭탄 정리
+  for (let i = bombs.length - 1; i >= 0; i--) {
+    if (Math.hypot(bombs[i].x - nuke.x, bombs[i].y - nuke.y) < NUKE_RADIUS + BOMB_R) removeBomb(i);
+  }
   nukeBlastEl.classList.add('boom');
   vibrate(80);
   shakeArena();
@@ -1571,6 +1659,110 @@ function collectItem(it) {
   vibrate(40);
   it.el.remove();
   item = null;
+}
+
+// ═══════════════════════════════════════════
+// B200 (어려움 전용) — 레이저 경로 예고 후 지나가며 폭탄 투하
+// ═══════════════════════════════════════════
+function resetCarrier() {
+  if (carrier) {
+    if (carrier.laserEl) carrier.laserEl.remove();
+    if (carrier.el) carrier.el.remove();
+    carrier = null;
+  }
+  for (let i = bombs.length - 1; i >= 0; i--) removeBomb(i);
+  carrierTimer = CARRIER_FIRST;
+}
+
+function clearCarrier() {
+  if (carrier) {
+    if (carrier.laserEl) { carrier.laserEl.remove(); carrier.laserEl = null; }
+    if (carrier.el) { carrier.el.remove(); carrier.el = null; }
+    carrier = null;
+  }
+}
+
+function spawnCarrier() {
+  const y = CARRIER_Y_MIN + Math.random() * (CARRIER_Y_MAX - CARRIER_Y_MIN);
+  const dir = Math.random() < 0.5 ? 1 : -1;
+  const laserEl = document.createElement('div');
+  laserEl.className = 'carrier-laser';
+  laserEl.style.top = y + 'px';
+  arenaEl.appendChild(laserEl);
+  carrier = { x: 0, y: y, dir: dir, state: 'warn', timer: CARRIER_WARN, bombsLeft: 0, bombTimer: 0, el: null, laserEl: laserEl };
+  showToast('✈️ B200 접근!');
+  vibrate(50);
+}
+
+function startCarrierFly() {
+  const el = document.createElement('div');
+  el.className = 'carrier';
+  const face = document.createElement('span');
+  face.className = 'carrier-face';
+  face.textContent = '✈️';
+  if (carrier.dir < 0) face.classList.add('carrier-left');
+  el.appendChild(face);
+  arenaEl.appendChild(el);
+  carrier.el = el;
+  carrier.x = carrier.dir > 0 ? -36 : arenaW + 36;
+  carrier.state = 'fly';
+  carrier.bombsLeft = CARRIER_BOMB_MIN + Math.floor(Math.random() * (CARRIER_BOMB_MAX - CARRIER_BOMB_MIN + 1));
+  carrier.bombTimer = 0.25;
+  syncCarrierEl();
+}
+
+function syncCarrierEl() {
+  carrier.el.style.transform = 'translate3d(' + carrier.x + 'px,' + (carrier.y - 15) + 'px,0)';
+}
+
+function dropBomb() {
+  const x = Math.max(24, Math.min(arenaW - 24, carrier.x));
+  const laserEl = document.createElement('div');
+  laserEl.className = 'bomb-laser';
+  laserEl.style.left = (x - 1) + 'px';
+  arenaEl.appendChild(laserEl);
+  bombs.push({ x: x, y: carrier.y + 18, vy: BOMB_SPEED, state: 'warn', timer: BOMB_WARN, el: null, laserEl: laserEl });
+}
+
+function updateBombs(dt) {
+  for (let i = bombs.length - 1; i >= 0; i--) {
+    const b = bombs[i];
+    if (b.state === 'warn') {
+      b.timer -= dt;
+      if (b.timer <= 0) {
+        if (b.laserEl) { b.laserEl.remove(); b.laserEl = null; }
+        const el = document.createElement('div');
+        el.className = 'bomb';
+        b.el = el;
+        arenaEl.appendChild(el);
+        b.state = 'fall';
+      }
+    } else {
+      b.y += b.vy * dt;
+      b.el.style.transform = 'translate3d(' + b.x + 'px,' + b.y + 'px,0)';
+      if (invuln <= 0 && Math.hypot(player.x - b.x, player.y - b.y) < BOMB_R + HIT_RX) {
+        hitPlayer(null);
+        removeBomb(i);
+        continue;
+      }
+      if (b.y > arenaH + 20) {
+        const poof = document.createElement('div');
+        poof.className = 'bomb-poof';
+        poof.style.left = (b.x - 17) + 'px';
+        poof.style.top = (arenaH - 34) + 'px';
+        arenaEl.appendChild(poof);
+        setTimeout(function() { poof.remove(); }, 350);
+        removeBomb(i);
+      }
+    }
+  }
+}
+
+function removeBomb(i) {
+  const b = bombs[i];
+  if (b.laserEl) b.laserEl.remove();
+  if (b.el) b.el.remove();
+  bombs.splice(i, 1);
 }
 
 function updatePlayer(dt) {
@@ -1666,7 +1858,7 @@ function update(dt) {
       nukeTimer -= dt;
       if (nukeTimer <= 0) {
         spawnNuke();
-        nukeTimer = NUKE_INTERVAL;
+        nukeTimer = NUKE_MIN + Math.random() * (NUKE_MAX - NUKE_MIN);
       }
     } else if (nuke.state === 'warn') {
       nuke.timer -= dt;
@@ -1677,6 +1869,35 @@ function update(dt) {
       if (nuke.timer <= 0) clearNuke();
     }
   }
+
+  // B200 (어려움 전용): 레이저 경로 예고 → 횡단하며 폭탄 투하
+  if (difficulty === 'hard') {
+    if (!carrier) {
+      carrierTimer -= dt;
+      if (carrierTimer <= 0) {
+        spawnCarrier();
+        carrierTimer = CARRIER_MIN + Math.random() * (CARRIER_MAX - CARRIER_MIN);
+      }
+    } else if (carrier.state === 'warn') {
+      carrier.timer -= dt;
+      if (carrier.timer <= 0) startCarrierFly();
+    } else if (carrier.state === 'fly') {
+      carrier.x += carrier.dir * CARRIER_SPEED * dt;
+      syncCarrierEl();
+      if (carrier.bombsLeft > 0) {
+        carrier.bombTimer -= dt;
+        if (carrier.bombTimer <= 0) {
+          dropBomb();
+          carrier.bombsLeft--;
+          carrier.bombTimer = 0.5;
+        }
+      }
+      if ((carrier.dir > 0 && carrier.x > arenaW + 40) || (carrier.dir < 0 && carrier.x < -40)) {
+        clearCarrier();
+      }
+    }
+  }
+  updateBombs(dt);
 
   // 아이템 (모든 난이도): 낮은 빈도로 위에서 낙하, 닿으면 획득
   if (!item) {
@@ -1860,6 +2081,7 @@ function startGame(diff) {
   resetBullets();
   resetNukes();
   resetItems();
+  resetCarrier();
   keyState.up = keyState.down = keyState.left = keyState.right = false;
   showScreen('game');
   updateArenaMetrics();
@@ -1883,6 +2105,7 @@ function resumeFromSave(save) {
   resetBullets();               // 총알 필드는 새로 비운 채 재개
   resetNukes();
   resetItems();
+  resetCarrier();
   keyState.up = keyState.down = keyState.left = keyState.right = false;
   showScreen('game');
   updateArenaMetrics();
