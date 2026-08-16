@@ -1974,8 +1974,8 @@ function spawnCarrier() {
     // 대각선 경로 예고: 현재 플레이어 위치를 지나는 회전 레이저 선
     laserEl.style.width = '1400px';
     laserEl.style.left = '0px';
-    laserEl.style.transformOrigin = '0 0';
-    laserEl.style.transform = 'translate3d(' + player.x + 'px,' + player.y + 'px,0) rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI) + 'deg)';
+    laserEl.style.transformOrigin = '50% 50%';
+    laserEl.style.transform = 'translate3d(' + (player.x - 700) + 'px,' + (player.y - 1.5) + 'px,0) rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI) + 'deg)';
   } else {
     laserEl.style.top = y + 'px';
   }
@@ -2117,8 +2117,8 @@ function spawnSamurai() {
     // 대각선 발도 예고: 현재 플레이어 위치를 지나는 회전 선
     lineEl.style.width = '1400px';
     lineEl.style.left = '0px';
-    lineEl.style.transformOrigin = '0 0';
-    lineEl.style.transform = 'translate3d(' + player.x + 'px,' + player.y + 'px,0) rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI) + 'deg)';
+    lineEl.style.transformOrigin = '50% 50%';
+    lineEl.style.transform = 'translate3d(' + (player.x - 700) + 'px,' + (player.y - 1.5) + 'px,0) rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI) + 'deg)';
   } else {
     lineEl.style.top = y + 'px';
   }
@@ -2444,8 +2444,8 @@ function spawnPigeon() {
   if (diag) {
     warnEl.style.width = '1400px';
     warnEl.style.left = '0px';
-    warnEl.style.transformOrigin = '0 0';
-    warnEl.style.transform = 'translate3d(' + player.x + 'px,' + player.y + 'px,0) rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI) + 'deg)';
+    warnEl.style.transformOrigin = '50% 50%';
+    warnEl.style.transform = 'translate3d(' + (player.x - 700) + 'px,' + (player.y - 1) + 'px,0) rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI) + 'deg)';
   } else {
     warnEl.style.top = y + 'px';
   }
