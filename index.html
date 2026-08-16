@@ -1283,15 +1283,11 @@ const CARRIER_MIN = 5;          // 공통 최소 간격 (초)
 const CARRIER_MAX = 10;         // 공통 최대 간격 (초, 시간에 따라 감소)
 const CARRIER_WARN = 2.5;        // 레이저 경로 예고 시간 (초)
 const CARRIER_SPEED = 260;       // 횡단 속도 (px/s)
-const CARRIER_Y_MIN = 40;        // 비행 레인 y 최소
-const CARRIER_Y_MAX = 240;       // 비행 레인 y 최대
 const BLAST_INTERVAL = 0.35;     // 카펫 폭발 간격 (초)
 const BLAST_R = 48;              // 경로 폭발 반경 (px)
 const SAMURAI_MIN = 5;          // 공통 최소 간격 (초)
 const SAMURAI_MAX = 10;         // 공통 최대 간격 (초, 시간에 따라 감소)
 const SAMURAI_WARN = 2.0;        // 준비자세 시간 (초)
-const SAMURAI_Y_MIN = 60;        // 베는 레인 y 최소
-const SAMURAI_Y_MAX = 260;       // 베는 레인 y 최대
 const SLASH_SPEED = 720;         // 발도 검기 속도 (px/s) — B200보다 훨씬 빠른 일섬
 const SLASH_R = 16;              // 검기 판정 반경 (px)
 const SLASH_CUT = 18;            // 검기에 베이는 총알 밴드 (레인 중심 ±px)
@@ -1950,37 +1946,24 @@ function randomEdgePoint() {
 }
 
 function spawnCarrier() {
-  // 가로/대각 랜덤: 대각선은 랜덤 엣지 점과 현재 플레이어 위치를 잇는 직선을 따라 횡단 (예측 불가)
-  const diag = Math.random() < 0.5;
-  let x, y, dx, dy;
-  if (diag) {
-    const R = randomEdgePoint();
-    const vx = player.x - R.x;
-    const vy = player.y - R.y;
-    const len = Math.hypot(vx, vy) || 1;
-    dx = vx / len;
-    dy = vy / len;
-    x = R.x - dx * 140;
-    y = R.y - dy * 140;
-  } else {
-    dy = 0;
-    dx = Math.random() < 0.5 ? 1 : -1;
-    y = CARRIER_Y_MIN + Math.random() * (CARRIER_Y_MAX - CARRIER_Y_MIN);
-    x = dx > 0 ? -50 : arenaW + 50;
-  }
+  // 항상 대각선: 랜덤 엣지 점과 현재 플레이어 위치를 잇는 직선을 따라 횡단 (예측 불가)
+  const R = randomEdgePoint();
+  const vx = player.x - R.x;
+  const vy = player.y - R.y;
+  const len = Math.hypot(vx, vy) || 1;
+  const dx = vx / len;
+  const dy = vy / len;
+  const x = R.x - dx * 140;
+  const y = R.y - dy * 140;
   const laserEl = document.createElement('div');
   laserEl.className = 'carrier-laser';
-  if (diag) {
-    // 대각선 경로 예고: 현재 플레이어 위치를 지나는 회전 레이저 선
-    laserEl.style.width = '1400px';
-    laserEl.style.left = '0px';
-    laserEl.style.transformOrigin = '50% 50%';
-    laserEl.style.transform = 'translate3d(' + (player.x - 700) + 'px,' + (player.y - 1.5) + 'px,0) rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI) + 'deg)';
-  } else {
-    laserEl.style.top = y + 'px';
-  }
+  // 대각선 경로 예고: 현재 플레이어 위치를 지나는 회전 레이저 선
+  laserEl.style.width = '1400px';
+  laserEl.style.left = '0px';
+  laserEl.style.transformOrigin = '50% 50%';
+  laserEl.style.transform = 'translate3d(' + (player.x - 700) + 'px,' + (player.y - 1.5) + 'px,0) rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI) + 'deg)';
   arenaEl.appendChild(laserEl);
-  const cr = { x: x, y: y, dx: dx, dy: dy, diag: diag, state: 'warn', timer: CARRIER_WARN, blastTimer: 0, el: null, laserEl: laserEl };
+  const cr = { x: x, y: y, dx: dx, dy: dy, state: 'warn', timer: CARRIER_WARN, blastTimer: 0, el: null, laserEl: laserEl };
   carriers.push(cr);
   showToast('✈️ B200 접근!');
   vibrate(50);
@@ -2001,15 +1984,11 @@ function startCarrierFly(cr) {
 
 function syncCarrierEl(cr) {
   if (!cr.el) return;
-  if (cr.diag) {
-    // 비행 방향으로 기울임 (좌측 진행 시 미러 + 회전으로 비행기 방향 유지)
-    const deg = cr.dx < 0
-      ? Math.atan2(-cr.dy, -cr.dx) * 180 / Math.PI
-      : Math.atan2(cr.dy, cr.dx) * 180 / Math.PI;
-    cr.el.style.transform = 'translate3d(' + (cr.x - 42) + 'px,' + (cr.y - 14) + 'px,0) rotate(' + deg + 'deg)';
-  } else {
-    cr.el.style.transform = 'translate3d(' + cr.x + 'px,' + (cr.y - 14) + 'px,0)';
-  }
+  // 비행 방향으로 기울임 (좌측 진행 시 미러 + 회전으로 비행기 방향 유지)
+  const deg = cr.dx < 0
+    ? Math.atan2(-cr.dy, -cr.dx) * 180 / Math.PI
+    : Math.atan2(cr.dy, cr.dx) * 180 / Math.PI;
+  cr.el.style.transform = 'translate3d(' + (cr.x - 42) + 'px,' + (cr.y - 14) + 'px,0) rotate(' + deg + 'deg)';
 }
 
 function spawnBlast(cr) {
@@ -2082,24 +2061,15 @@ function samuraiSvg() {
 }
 
 function spawnSamurai() {
-  // 가로/대각 랜덤: 대각선은 랜덤 엣지 점과 현재 플레이어 위치를 잇는 직선 — 그 끝에서 발도 (예측 불가)
-  const diag = Math.random() < 0.5;
-  let x, y, dx, dy;
-  if (diag) {
-    const R = randomEdgePoint();
-    const vx = player.x - R.x;
-    const vy = player.y - R.y;
-    const len = Math.hypot(vx, vy) || 1;
-    dx = vx / len;
-    dy = vy / len;
-    x = R.x - dx * 100;
-    y = R.y - dy * 100;
-  } else {
-    dy = 0;
-    dx = Math.random() < 0.5 ? 1 : -1;
-    y = SAMURAI_Y_MIN + Math.random() * (SAMURAI_Y_MAX - SAMURAI_Y_MIN);
-    x = dx > 0 ? 14 : arenaW - 104;
-  }
+  // 항상 대각선: 랜덤 엣지 점과 현재 플레이어 위치를 잇는 직선 — 그 끝에서 발도 (예측 불가)
+  const R = randomEdgePoint();
+  const vx = player.x - R.x;
+  const vy = player.y - R.y;
+  const len = Math.hypot(vx, vy) || 1;
+  const dx = vx / len;
+  const dy = vy / len;
+  const x = R.x + dx * 50;
+  const y = R.y + dy * 50;
   const el = document.createElement('div');
   el.className = 'samurai';
   const svg = samuraiSvg();
@@ -2108,22 +2078,21 @@ function spawnSamurai() {
   const charge = document.createElement('div');
   charge.className = 'samurai-charge';
   el.appendChild(charge);
-  el.style.transform = 'translate3d(' + (diag ? x - 45 : x) + 'px,' + (y - 40) + 'px,0)';
+  const deg = dx < 0
+    ? Math.atan2(-dy, -dx) * 180 / Math.PI
+    : Math.atan2(dy, dx) * 180 / Math.PI;
+  el.style.transform = 'translate3d(' + (x - 45) + 'px,' + (y - 32) + 'px,0) rotate(' + deg + 'deg)';
   arenaEl.appendChild(el);
   el.classList.add('charging');
   const lineEl = document.createElement('div');
   lineEl.className = 'slash-line';
-  if (diag) {
-    // 대각선 발도 예고: 현재 플레이어 위치를 지나는 회전 선
-    lineEl.style.width = '1400px';
-    lineEl.style.left = '0px';
-    lineEl.style.transformOrigin = '50% 50%';
-    lineEl.style.transform = 'translate3d(' + (player.x - 700) + 'px,' + (player.y - 1.5) + 'px,0) rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI) + 'deg)';
-  } else {
-    lineEl.style.top = y + 'px';
-  }
+  // 대각선 발도 예고: 현재 플레이어 위치를 지나는 회전 선
+  lineEl.style.width = '1400px';
+  lineEl.style.left = '0px';
+  lineEl.style.transformOrigin = '50% 50%';
+  lineEl.style.transform = 'translate3d(' + (player.x - 700) + 'px,' + (player.y - 1.5) + 'px,0) rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI) + 'deg)';
   arenaEl.appendChild(lineEl);
-  const sm = { x: x, y: y, dx: dx, dy: dy, diag: diag, state: 'stance', timer: SAMURAI_WARN, el: el, lineEl: lineEl, waveEl: null };
+  const sm = { x: x, y: y, dx: dx, dy: dy, state: 'stance', timer: SAMURAI_WARN, el: el, lineEl: lineEl, waveEl: null };
   samurais.push(sm);
   showToast('⚔️ 사무라이 등장!');
   vibrate(30);
@@ -2163,15 +2132,12 @@ function startSlash(sm) {
   }, 400);
 }
 
-// 검기/비행체 방향 정렬 트랜스폼 — 좌측 진행 시 미러 + 회전으로 방향 유지
+// 검기 방향 정렬 트랜스폼 — 좌측 진행 시 미러 + 회전으로 방향 유지
 function waveTransform(sm) {
-  if (sm.diag) {
-    const deg = sm.dx < 0
-      ? Math.atan2(-sm.dy, -sm.dx) * 180 / Math.PI
-      : Math.atan2(sm.dy, sm.dx) * 180 / Math.PI;
-    return 'translate3d(' + (sm.x - 17) + 'px,' + (sm.y - 9) + 'px,0) rotate(' + deg + 'deg)';
-  }
-  return 'translate3d(' + (sm.x - 17) + 'px,' + (sm.y - 9) + 'px,0)';
+  const deg = sm.dx < 0
+    ? Math.atan2(-sm.dy, -sm.dx) * 180 / Math.PI
+    : Math.atan2(sm.dy, sm.dx) * 180 / Math.PI;
+  return 'translate3d(' + (sm.x - 17) + 'px,' + (sm.y - 9) + 'px,0) rotate(' + deg + 'deg)';
 }
 
 function updateSamurai(sm, dt) {
