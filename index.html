@@ -457,6 +457,69 @@ body{
   margin:-7px 0 0 -7px;
   will-change:transform;
 }
+.nuke-warn{
+  position:absolute;
+  width:88px;height:88px;
+  margin:-44px 0 0 -44px;
+  border:3px dashed #F87171;
+  border-radius:50%;
+  background:rgba(239,68,68,0.18);
+  display:flex;align-items:center;justify-content:center;
+  z-index:3;
+  pointer-events:none;
+  animation:nukePulse 1s ease-in-out infinite;
+}
+.nuke-count{
+  font-size:32px;font-weight:800;color:#fff;
+  text-shadow:0 0 10px rgba(239,68,68,1),0 0 4px #000;
+  line-height:1;
+}
+@keyframes nukePulse{
+  0%,100%{transform:scale(1);opacity:.95}
+  50%{transform:scale(1.1);opacity:1}
+}
+.nuke-blast{
+  position:absolute;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(255,220,120,.95) 0%, rgba(239,68,68,.65) 45%, transparent 72%);
+  border:3px solid rgba(239,68,68,.95);
+  opacity:0;
+  pointer-events:none;
+  z-index:3;
+}
+.nuke-blast.boom{animation:nukeBoom .7s ease-out forwards}
+@keyframes nukeBoom{
+  0%{transform:scale(.3);opacity:0}
+  25%{opacity:1}
+  100%{transform:scale(1.15);opacity:0}
+}
+.item{
+  position:absolute;
+  left:0;top:0;
+  width:36px;height:36px;
+  margin:-18px 0 0 -18px;
+  border-radius:50%;
+  background:rgba(255,255,255,.95);
+  border:2px solid #E5E7EB;
+  box-shadow:0 2px 8px rgba(0,0,0,.35);
+  display:flex;align-items:center;justify-content:center;
+  z-index:3;
+  pointer-events:none;
+}
+.item-shield{background:rgba(219,234,254,.95);border-color:#3B82F6}
+.item-life{background:rgba(254,226,226,.95);border-color:#EF4444}
+.item-emoji{
+  font-size:22px;
+  line-height:1;
+  animation:itemFloat 1.2s ease-in-out infinite;
+}
+@keyframes itemFloat{
+  0%,100%{transform:translateY(-3px)}
+  50%{transform:translateY(3px)}
+}
+.player.shielded{
+  box-shadow:0 0 0 3px rgba(250,204,21,.85),0 0 16px rgba(250,204,21,.6);
+}
 .player{
   position:absolute;
   left:0;top:0;
@@ -793,7 +856,7 @@ button:focus-visible{
       </button>
       <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도로 시작">
         <span class="diff-name">어려움</span>
-        <span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄</span>
+        <span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄 · ☢️ 핵</span>
       </button>
     </div>
 
@@ -863,7 +926,7 @@ button:focus-visible{
     <div class="diff-grid" role="group" aria-label="난이도 선택">
       <button class="diff-btn" data-diff="easy" type="button" aria-label="쉬움 난이도"><span class="diff-name">쉬움</span><span class="diff-desc">천천히 떨어지는 총알 · 최대 32발 · 살짝 휘어요</span></button>
       <button class="diff-btn" data-diff="normal" type="button" aria-label="보통 난이도"><span class="diff-name">보통</span><span class="diff-desc">보통 속도의 총알 · 최대 45발 · 휘는 총알</span></button>
-      <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도"><span class="diff-name">어려움</span><span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄</span></button>
+      <button class="diff-btn" data-diff="hard" type="button" aria-label="어려움 난이도"><span class="diff-name">어려움</span><span class="diff-desc">빠르고 많은 총알 · 최대 60발 · 강한 유도탄 · ☢️ 핵</span></button>
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" id="btnCancelDiff" type="button">취소</button>
@@ -935,6 +998,14 @@ button:focus-visible{
         <p>난이도가 높아지면 총알이 빙글빙글 돌며 날아와요. 도는 궤도를 보고 피하세요.</p>
       </div>
       <div class="rule-section">
+        <h3>☢️ 핵 (어려움 전용)</h3>
+        <p>랜덤한 위치에 경고 원이 뜨고 3,2,1 카운트다운 뒤 폭발해요. 원 안에 있으면 목숨을 잃으니 카운트다운 동안 꼭 피하세요. 폭발 범위 안의 총알은 함께 사라져요.</p>
+      </div>
+      <div class="rule-section">
+        <h3>📦 아이템</h3>
+        <p>가끔 위에서 아이템이 떨어져요. 받으면 🛡️ 쉴드(잠시 무적)나 ❤️ 목숨 +1이 돼요. 목숨이 가득이면 쉴드가 떨어져요.</p>
+      </div>
+      <div class="rule-section">
         <h3>⌨️ 컴퓨터 · 키보드</h3>
         <p>방향키(↑↓←→)나 <b>W·A·S·D</b> 키로 캐릭터를 움직여요. <b>P</b>나 <b>Esc</b> 키를 누르면 잠시 멈출 수 있어요.</p>
       </div>
@@ -983,6 +1054,23 @@ const PLAYER_R = 9;             // 시각 반지름 (18px 원 — 총알보다 �
 const HIT_RX = 5;               // 충돌 판정 가로 반지름 (횡축 완화 — 세로보다 좁음)
 const HIT_RY = 7;               // 충돌 판정 세로 반지름 (관대한 히트박스)
 const BULLET_R = 7;             // 총알 반지름 (14px 원)
+const NUKE_FIRST = 6;           // 어려움: 첫 핵까지 (초)
+const NUKE_INTERVAL = 12;       // 어려움: 이후 핵 간격 (초)
+const NUKE_WARN = 3;            // 핵 카운트다운 (초)
+const NUKE_RADIUS = 85;         // 핵 폭발 반경 (px)
+let nuke = null;                // 핵 상태 { x, y, timer, state: 'warn'|'blast' }
+let nukeTimer = NUKE_FIRST;     // 다음 핵까지 남은 시간 (초)
+let nukeWarnEl = null;
+let nukeCountEl = null;
+let nukeBlastEl = null;
+const ITEM_FIRST = 12;          // 첫 아이템까지 (초) — 모든 난이도 공통, 낮은 빈도
+const ITEM_MIN = 12;            // 이후 최소 간격 (초)
+const ITEM_MAX = 24;            // 이후 최대 간격 (초)
+const ITEM_SPEED = 90;          // 아이템 낙하 속도 (px/s)
+const ITEM_CATCH_R = 34;        // 아이템 획득 판정 반경 (px)
+const SHIELD_SECONDS = 5;       // 쉴드 무적 시간 (초)
+let item = null;                // 아이템 { x, y, vy, type: 'shield'|'life', el }
+let itemTimer = ITEM_FIRST;     // 다음 아이템까지 남은 시간 (초)
 const MAX_BULLETS = 60;         // 풀 크기 = 최대 활성 총알 수 (어려움 기준)
 const INVULN_SECONDS = 1.5;
 const RAMP_RATE = 0.02;         // 초당 +2% 난이도 상승
@@ -1370,6 +1458,121 @@ function updateBullets(dt) {
   }
 }
 
+// ═══════════════════════════════════════════
+// NUKE (어려움 전용) — 랜덤 위치 경고 후 폭발
+// ═══════════════════════════════════════════
+function resetNukes() {
+  nuke = null;
+  nukeTimer = NUKE_FIRST;
+  if (nukeWarnEl) { nukeWarnEl.remove(); nukeWarnEl = null; }
+  if (nukeBlastEl) { nukeBlastEl.remove(); nukeBlastEl = null; }
+}
+
+function spawnNuke() {
+  const m = NUKE_RADIUS + 10;
+  nuke = {
+    x: m + Math.random() * Math.max(0, arenaW - 2 * m),
+    y: m + Math.random() * Math.max(0, arenaH - 2 * m),
+    timer: NUKE_WARN,
+    state: 'warn'
+  };
+  nukeWarnEl = document.createElement('div');
+  nukeWarnEl.className = 'nuke-warn';
+  nukeCountEl = document.createElement('span');
+  nukeCountEl.className = 'nuke-count';
+  nukeWarnEl.appendChild(nukeCountEl);
+  arenaEl.appendChild(nukeWarnEl);
+  nukeBlastEl = document.createElement('div');
+  nukeBlastEl.className = 'nuke-blast';
+  arenaEl.appendChild(nukeBlastEl);
+  nukeWarnEl.style.left = nuke.x + 'px';
+  nukeWarnEl.style.top = nuke.y + 'px';
+  nukeBlastEl.style.left = nuke.x + 'px';
+  nukeBlastEl.style.top = nuke.y + 'px';
+  nukeBlastEl.style.width = nukeBlastEl.style.height = (NUKE_RADIUS * 2) + 'px';
+  nukeBlastEl.style.margin = (-NUKE_RADIUS) + 'px 0 0 ' + (-NUKE_RADIUS) + 'px';
+  nukeCountEl.textContent = String(Math.ceil(nuke.timer));
+  showToast('☢️ 핵 경보!');
+}
+
+function detonateNuke() {
+  nuke.state = 'blast';
+  nuke.timer = 0.7;
+  if (nukeWarnEl) { nukeWarnEl.remove(); nukeWarnEl = null; }
+  // 폭발 범위 내 플레이어 피격
+  if (invuln <= 0 && Math.hypot(player.x - nuke.x, player.y - nuke.y) < NUKE_RADIUS) {
+    hitPlayer(null);
+    if (phase !== 'playing') return;
+  }
+  // 폭발 범위 내 총알 정리
+  for (let i = 0; i < MAX_BULLETS; i++) {
+    const b = bullets[i];
+    if (b.active && Math.hypot(b.x - nuke.x, b.y - nuke.y) < NUKE_RADIUS + BULLET_R) {
+      b.active = false;
+      activeCount--;
+      b.el.style.display = 'none';
+    }
+  }
+  nukeBlastEl.classList.add('boom');
+  vibrate(80);
+  shakeArena();
+}
+
+function clearNuke() {
+  if (nukeBlastEl) { nukeBlastEl.remove(); nukeBlastEl = null; }
+  nuke = null;
+}
+
+// ═══════════════════════════════════════════
+// ITEM (모든 난이도 공통, 낮은 빈도) — 위에서 낙하
+// ═══════════════════════════════════════════
+function resetItems() {
+  if (item) { item.el.remove(); item = null; }
+  itemTimer = ITEM_FIRST;
+}
+
+function spawnItem() {
+  // 목숨이 가득이면 낭비 없이 쉴드만
+  const type = (lives < MAX_LIVES && Math.random() < 0.5) ? 'life' : 'shield';
+  const el = document.createElement('div');
+  el.className = type === 'life' ? 'item item-life' : 'item item-shield';
+  const emoji = document.createElement('span');
+  emoji.className = 'item-emoji';
+  emoji.textContent = type === 'life' ? '❤️' : '🛡️';
+  el.appendChild(emoji);
+  arenaEl.appendChild(el);
+  item = {
+    x: PLAYER_R + Math.random() * Math.max(0, arenaW - 2 * PLAYER_R),
+    y: -20,
+    vy: ITEM_SPEED,
+    type: type,
+    el: el
+  };
+}
+
+function applyShield() {
+  invuln = SHIELD_SECONDS;
+  playerEl.classList.add('shielded');
+  if (invulnTimer) clearTimeout(invulnTimer);
+  invulnTimer = setTimeout(function() {
+    playerEl.classList.remove('shielded');
+  }, SHIELD_SECONDS * 1000);
+}
+
+function collectItem(it) {
+  if (it.type === 'shield') {
+    applyShield();
+    showToast('🛡️ 쉴드! 5초 무적!');
+  } else {
+    lives = Math.min(MAX_LIVES, lives + 1);
+    updateHearts();
+    showToast('❤️ 목숨 +1!');
+  }
+  vibrate(40);
+  it.el.remove();
+  item = null;
+}
+
 function updatePlayer(dt) {
   const minX = PLAYER_R;
   const minY = PLAYER_R;
@@ -1404,8 +1607,7 @@ function updatePlayer(dt) {
 }
 
 function hitPlayer(b) {
-  b.active = false;
-  activeCount--;
+  if (b) { b.active = false; activeCount--; }
   lives--;
   updateHearts();
   vibrate(30);
@@ -1457,6 +1659,42 @@ function update(dt) {
 
   updatePlayer(dt);
   updateBullets(dt);
+
+  // 핵 (어려움 전용): 랜덤 위치 경고 → 3,2,1 카운트다운 → 폭발
+  if (difficulty === 'hard') {
+    if (!nuke) {
+      nukeTimer -= dt;
+      if (nukeTimer <= 0) {
+        spawnNuke();
+        nukeTimer = NUKE_INTERVAL;
+      }
+    } else if (nuke.state === 'warn') {
+      nuke.timer -= dt;
+      nukeCountEl.textContent = String(Math.ceil(nuke.timer));
+      if (nuke.timer <= 0) detonateNuke();
+    } else {
+      nuke.timer -= dt;
+      if (nuke.timer <= 0) clearNuke();
+    }
+  }
+
+  // 아이템 (모든 난이도): 낮은 빈도로 위에서 낙하, 닿으면 획득
+  if (!item) {
+    itemTimer -= dt;
+    if (itemTimer <= 0) {
+      spawnItem();
+      itemTimer = ITEM_MIN + Math.random() * (ITEM_MAX - ITEM_MIN);
+    }
+  } else {
+    item.y += item.vy * dt;
+    item.el.style.transform = 'translate3d(' + item.x + 'px,' + item.y + 'px,0)';
+    if (item.y > arenaH + 40) {
+      item.el.remove();
+      item = null;
+    } else if (Math.hypot(player.x - item.x, player.y - item.y) < ITEM_CATCH_R) {
+      collectItem(item);
+    }
+  }
 }
 
 function renderFrame() {
@@ -1620,6 +1858,8 @@ function startGame(diff) {
   createdAt = Date.now();
   spawnTimer = DIFFICULTY_CONFIG[diff].spawnStart;
   resetBullets();
+  resetNukes();
+  resetItems();
   keyState.up = keyState.down = keyState.left = keyState.right = false;
   showScreen('game');
   updateArenaMetrics();
@@ -1641,6 +1881,8 @@ function resumeFromSave(save) {
   createdAt = save.createdAt || Date.now();
   spawnTimer = DIFFICULTY_CONFIG[difficulty].spawnStart;
   resetBullets();               // 총알 필드는 새로 비운 채 재개
+  resetNukes();
+  resetItems();
   keyState.up = keyState.down = keyState.left = keyState.right = false;
   showScreen('game');
   updateArenaMetrics();
