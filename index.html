@@ -2171,7 +2171,7 @@ function update(dt) {
           if (phase !== 'playing') return;
           cr.blastTimer = BLAST_INTERVAL;
         }
-        if (cr.x < -120 || cr.x > arenaW + 120 || cr.y < -120 || cr.y > arenaH + 120) {
+        if (cr.x < -150 || cr.x > arenaW + 150 || cr.y < -150 || cr.y > arenaH + 150) {
           clearCarrier(cr);
         }
       }
