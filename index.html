@@ -637,6 +637,17 @@ body{
   filter:drop-shadow(0 0 6px rgba(255,255,255,1)) drop-shadow(0 0 14px rgba(140,185,255,.9)) drop-shadow(0 0 28px rgba(80,140,255,.5));
 }
 .slash-wave svg{display:block;width:100%;height:100%}
+.slash-trail{
+  position:absolute;
+  left:0;top:0;
+  height:3px;
+  margin-top:-1.5px;
+  background:linear-gradient(90deg, transparent 0%, rgba(180,215,255,.7) 5%, rgba(220,240,255,.95) 20%, rgba(255,255,255,1) 50%, rgba(220,240,255,.95) 80%, rgba(180,215,255,.7) 95%, transparent 100%);
+  box-shadow:0 0 6px 2px rgba(200,230,255,.8), 0 0 14px 4px rgba(120,180,255,.5);
+  transform-origin:0 50%;
+  pointer-events:none;
+  z-index:4;
+}
 .slash-flash{
   position:absolute;
   left:0;right:0;
@@ -1917,6 +1928,7 @@ function clearSamurai(sm) {
   if (sm.el) { sm.el.remove(); sm.el = null; }
   if (sm.lineEl) { sm.lineEl.remove(); sm.lineEl = null; }
   if (sm.waveEl) { sm.waveEl.remove(); sm.waveEl = null; }
+  if (sm.trailEl) { sm.trailEl.remove(); sm.trailEl = null; }
   const idx = samurais.indexOf(sm);
   if (idx >= 0) samurais.splice(idx, 1);
 }
@@ -2017,9 +2029,16 @@ function startSlash(sm) {
   el.appendChild(wave);
   sm.x += sm.dx * 20;
   sm.y += sm.dy * 20;
+  sm.startX = sm.x;
+  sm.startY = sm.y;
   el.style.transform = waveTransform(sm);
   arenaEl.appendChild(el);
   sm.waveEl = el;
+  // 직선 trail: 시작점에서 현재 위치까지 이어지는 검기 자국
+  const trail = document.createElement('div');
+  trail.className = 'slash-trail';
+  arenaEl.appendChild(trail);
+  sm.trailEl = trail;
   const cur = sm;
   setTimeout(function() {
     if (cur.el) { cur.el.remove(); cur.el = null; }
@@ -2034,6 +2053,16 @@ function waveTransform(sm) {
   return 'translate3d(' + (sm.x - 17) + 'px,' + (sm.y - 9) + 'px,0) rotate(' + deg + 'deg)';
 }
 
+// 점에서 선분까지의 최단 거리
+function ptSegDist(px, py, ax, ay, bx, by) {
+  const abx = bx - ax, aby = by - ay;
+  const apx = px - ax, apy = py - ay;
+  const ab2 = abx * abx + aby * aby;
+  if (ab2 === 0) return Math.hypot(apx, apy);
+  const t = Math.max(0, Math.min(1, (apx * abx + apy * aby) / ab2));
+  return Math.hypot(px - (ax + t * abx), py - (ay + t * aby));
+}
+
 function updateSamurai(sm, dt) {
   if (sm.state === 'stance') {
     sm.timer -= dt;
@@ -2041,19 +2070,26 @@ function updateSamurai(sm, dt) {
   } else if (sm.state === 'slash') {
     sm.x += sm.dx * SLASH_SPEED * dt;
     sm.y += sm.dy * SLASH_SPEED * dt;
+    // trail 업데이트: 시작점에서 현재 위치까지
+    if (sm.trailEl) {
+      const tdx = sm.x - sm.startX, tdy = sm.y - sm.startY;
+      const tdist = Math.hypot(tdx, tdy);
+      const tang = Math.atan2(tdy, tdx) * 180 / Math.PI;
+      sm.trailEl.style.width = tdist + 'px';
+      sm.trailEl.style.transform = 'translate3d(' + sm.startX + 'px,' + (sm.startY - 1.5) + 'px,0) rotate(' + tang + 'deg)';
+    }
     if (sm.waveEl) {
       sm.waveEl.style.transform = waveTransform(sm);
-      if (invuln <= 0 && Math.hypot(player.x - sm.x, player.y - sm.y) < SLASH_R + HIT_RX) {
+      // 직선 충돌: 플레이어가 start→current 선분으로부터 SLASH_R 이내
+      if (invuln <= 0 && ptSegDist(player.x, player.y, sm.startX, sm.startY, sm.x, sm.y) < SLASH_R + HIT_RX) {
         hitPlayer(null);
         if (phase !== 'playing') return;
       }
+      // 총알 베기: 선분 전체 범위에서 cut
       for (let i = 0; i < MAX_BULLETS; i++) {
         const b = bullets[i];
         if (!b.active) continue;
-        // 검기 진행 방향 전후 30px 밴드 + 경로로부터 수직 거리 (가로/대각 공통)
-        const along = (b.x - sm.x) * sm.dx + (b.y - sm.y) * sm.dy;
-        const perp = Math.abs((b.x - sm.x) * -sm.dy + (b.y - sm.y) * sm.dx);
-        if (Math.abs(along) < 30 && perp < SLASH_CUT) {
+        if (ptSegDist(b.x, b.y, sm.startX, sm.startY, sm.x, sm.y) < SLASH_CUT) {
           b.active = false;
           activeCount--;
           b.el.style.display = 'none';
