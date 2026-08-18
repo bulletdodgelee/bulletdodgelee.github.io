@@ -607,17 +607,26 @@ body{
 .slash-line{
   position:absolute;
   left:0;right:0;
-  height:2px;
-  margin-top:-1px;
-  background:linear-gradient(90deg, transparent 0%, rgba(220,230,255,.85) 20%, rgba(255,255,255,.95) 50%, rgba(220,230,255,.85) 80%, transparent 100%);
-  box-shadow:0 0 12px rgba(190,210,255,.8);
-  animation:slashLinePulse .45s ease-in-out infinite;
+  height:4px;
+  margin-top:-2px;
+  background:linear-gradient(90deg, transparent 0%, rgba(100,175,255,.95) 5%, rgba(200,228,255,1) 18%, rgba(255,255,255,1) 42%, #fff 50%, rgba(255,255,255,1) 58%, rgba(200,228,255,1) 82%, rgba(100,175,255,.95) 95%, transparent 100%);
+  box-shadow:0 0 6px 2px rgba(255,255,255,.95), 0 0 18px 4px rgba(120,180,255,.85), 0 0 45px 8px rgba(80,140,255,.5), 0 0 90px 12px rgba(50,100,255,.25);
+  animation:slashLinePulse .35s ease-in-out infinite;
   pointer-events:none;
   z-index:4;
 }
+.slash-line::before{
+  content:'';
+  position:absolute;
+  left:3%;right:3%;
+  top:-8px;bottom:-8px;
+  background:linear-gradient(90deg, transparent 0%, rgba(100,170,255,.12) 12%, rgba(160,210,255,.2) 35%, rgba(255,255,255,.25) 50%, rgba(160,210,255,.2) 65%, rgba(100,170,255,.12) 88%, transparent 100%);
+  filter:blur(5px);
+  pointer-events:none;
+}
 @keyframes slashLinePulse{
-  0%,100%{opacity:.45}
-  50%{opacity:.95}
+  0%,100%{opacity:.7}
+  50%{opacity:1}
 }
 .slash-wave{
   position:absolute;
@@ -625,9 +634,24 @@ body{
   width:34px;height:18px;
   pointer-events:none;
   z-index:5;
-  filter:drop-shadow(0 0 8px rgba(200,220,255,.9));
+  filter:drop-shadow(0 0 6px rgba(255,255,255,1)) drop-shadow(0 0 14px rgba(140,185,255,.9)) drop-shadow(0 0 28px rgba(80,140,255,.5));
 }
 .slash-wave svg{display:block;width:100%;height:100%}
+.slash-flash{
+  position:absolute;
+  left:0;right:0;
+  height:60px;
+  margin-top:-30px;
+  background:linear-gradient(90deg, transparent 0%, rgba(180,220,255,.6) 8%, rgba(255,255,255,.95) 25%, #fff 48%, #fff 52%, rgba(255,255,255,.95) 75%, rgba(180,220,255,.6) 92%, transparent 100%);
+  animation:slashFlash .4s ease-out forwards;
+  pointer-events:none;
+  z-index:6;
+}
+@keyframes slashFlash{
+  0%{opacity:1;box-shadow:0 0 30px 8px rgba(180,220,255,.8), 0 0 60px 16px rgba(100,160,255,.4), 0 0 100px 24px rgba(60,120,255,.2)}
+  50%{opacity:.6;box-shadow:0 0 12px 3px rgba(255,255,255,.5), 0 0 25px 6px rgba(180,220,255,.2)}
+  100%{opacity:0;box-shadow:none}
+}
 .player{
   position:absolute;
   left:0;top:0;
@@ -1963,9 +1987,10 @@ function slashWaveSvg() {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('viewBox', '0 0 34 18');
   svg.innerHTML =
-    '<polygon points="2,8.2 26,8.2 26,9.8 2,9.8" fill="rgba(210,225,255,.4)"/>' +
-    '<path d="M30 1 Q34 9 30 17 Q24 9 30 1 Z" fill="rgba(250,252,255,.95)" stroke="#ffffff" stroke-width="1"/>' +
-    '<path d="M29 4 Q31.5 9 29 14 Q25.5 9 29 4 Z" fill="#ffffff"/>';
+    '<polygon points="0,7 26,8.2 26,9.8 0,11" fill="rgba(160,200,255,.5)"/>' +
+    '<polygon points="0,7.5 24,8.4 24,9.6 0,10.5" fill="rgba(220,235,255,.9)"/>' +
+    '<path d="M28 0 Q34 9 28 18 Q20 9 28 0 Z" fill="rgba(255,255,255,.98)" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>' +
+    '<path d="M26 3.5 Q31 9 26 14.5 Q21 9 26 3.5 Z" fill="#ffffff"/>';
   return svg;
 }
 
@@ -1976,7 +2001,15 @@ function startSlash(sm) {
     sm.el.classList.remove('charging');
     sm.el.style.opacity = '0';
   }
-  if (sm.lineEl) { sm.lineEl.remove(); sm.lineEl = null; }
+  if (sm.lineEl) {
+    var flash = document.createElement('div');
+    flash.className = 'slash-flash';
+    flash.style.transform = sm.lineEl.style.transform;
+    arenaEl.appendChild(flash);
+    setTimeout(function() { if (flash.parentNode) flash.remove(); }, 450);
+    sm.lineEl.remove();
+    sm.lineEl = null;
+  }
   const el = document.createElement('div');
   el.className = 'slash-wave';
   const wave = slashWaveSvg();
