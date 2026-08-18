@@ -1694,7 +1694,6 @@ function spawnNuke() {
   nk.blastEl = blastEl;
   nk.fallEl = fallEl;
   nukes.push(nk);
-  showToast('☢️ 핵 경보!');
 }
 
 function detonateNuke(nk) {
@@ -1758,11 +1757,9 @@ function spawnItem() {
 function collectItem(it) {
   if (it.type === 'shield') {
     applyShield();
-    showToast('🛡️ 쉴드! 5초 무적!');
   } else {
     lives = Math.min(MAX_LIVES, lives + 1);
     updateHearts();
-    showToast('❤️ 목숨 +1!');
   }
   vibrate(40);
   if (it.el) it.el.remove();
@@ -1777,21 +1774,6 @@ function applyShield() {
   invulnTimer = setTimeout(function() {
     playerEl.classList.remove('shielded');
   }, SHIELD_SECONDS * 1000);
-}
-
-function collectItem(it) {
-  if (it.type === 'shield') {
-    applyShield();
-    showToast('🛡️ 쉴드! 5초 무적!');
-  } else {
-    lives = Math.min(MAX_LIVES, lives + 1);
-    updateHearts();
-    showToast('❤️ 목숨 +1!');
-  }
-  vibrate(40);
-  if (it.el) it.el.remove();
-  const idx = items.indexOf(it);
-  if (idx >= 0) items.splice(idx, 1);
 }
 
 // ═══════════════════════════════════════════
@@ -1861,7 +1843,6 @@ function spawnCarrier() {
   arenaEl.appendChild(laserEl);
   const cr = { x: x, y: y, dx: dx, dy: dy, state: 'warn', timer: CARRIER_WARN, blastTimer: 0, el: null, laserEl: laserEl };
   carriers.push(cr);
-  showToast('✈️ B200 접근!');
   vibrate(50);
 }
 
@@ -1991,7 +1972,6 @@ function spawnSamurai() {
   arenaEl.appendChild(lineEl);
   const sm = { x: x, y: y, dx: dx, dy: dy, state: 'stance', timer: SAMURAI_WARN, el: el, lineEl: lineEl, waveEl: null };
   samurais.push(sm);
-  showToast('⚔️ 사무라이 등장!');
   vibrate(30);
 }
 
