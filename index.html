@@ -862,6 +862,7 @@ body{
   display:block;
 }
 .new-record-badge[hidden]{display:none}
+.stat[hidden]{display:none}
 @keyframes pulse{
   0%,100%{transform:scale(1)}
   50%{transform:scale(1.05)}
@@ -2333,6 +2334,7 @@ function finish(winFlag) {
       winTime.textContent = formatTime(secs);
       winScore.textContent = formatNumber(sc) + '점';
       winBest.textContent = bestTime > 0 ? formatTime(bestTime) : '--';
+      winBest.parentElement.hidden = false;
       winNewRecord.hidden = !isNewBest;
       // 내가 플레이한 클리어: 시작하기는 불필요 → 공유/다시하기 표시
       btnWinShare.hidden = false;
@@ -2344,6 +2346,7 @@ function finish(winFlag) {
       goTime.textContent = formatTime(secs);
       goScore.textContent = formatNumber(sc) + '점';
       goBest.textContent = bestTime > 0 ? formatTime(bestTime) : '--';
+      goBest.parentElement.hidden = false;
       goNewRecord.hidden = !isNewBest;
       // 내가 플레이한 게임오버: 시작하기는 불필요 → 공유/다시하기 표시
       btnGoShare.hidden = false;
@@ -2399,6 +2402,7 @@ function showSharedResult(data) {
     winTime.textContent = formatTime(secs);
     winScore.textContent = formatNumber(sc) + '점';
     winBest.textContent = '--';
+    winBest.parentElement.hidden = true;
     winNewRecord.hidden = true;
     // 공유받은 화면: 공유/다시하기는 불필요 → "시작하기"로 대체
     btnWinShare.hidden = true;
@@ -2410,6 +2414,7 @@ function showSharedResult(data) {
     goTime.textContent = formatTime(secs);
     goScore.textContent = formatNumber(sc) + '점';
     goBest.textContent = '--';
+    goBest.parentElement.hidden = true;
     goNewRecord.hidden = true;
     // 공유받은 화면: 공유/다시하기는 불필요 → "시작하기"로 대체
     btnGoShare.hidden = true;
