@@ -794,6 +794,7 @@ body{
 .btn-primary:active{background:var(--primary-hover);transform:scale(0.97)}
 .btn-secondary{background:var(--surface-raised);color:var(--text);border:2.5px solid var(--border)}
 .btn-secondary:active{background:var(--border-thin);transform:scale(0.97)}
+.btn[hidden]{display:none}
 
 /* Portal button — go back to the games portal (모달마다 필수) */
 .btn-portal{
@@ -1094,7 +1095,9 @@ button:focus-visible{
     </div>
     <div class="modal-actions">
       <button class="btn btn-primary" id="btnGoRetry" type="button">🔄 다시 도전</button>
+      <button class="btn btn-primary" id="btnGoPlay" type="button" hidden>🎮 시작하기</button>
       <button class="btn btn-secondary" id="btnGoDiff" type="button">🎚️ 난이도 선택</button>
+      <button class="btn btn-secondary" id="btnGoShare" type="button">📋 공유하기</button>
     </div>
     <button class="btn-portal" type="button">🎮 다른 게임하기</button>
   </div>
@@ -1116,7 +1119,9 @@ button:focus-visible{
     </div>
     <div class="modal-actions">
       <button class="btn btn-primary" id="btnWinRetry" type="button">🔄 다시 도전</button>
+      <button class="btn btn-primary" id="btnWinPlay" type="button" hidden>🎮 시작하기</button>
       <button class="btn btn-secondary" id="btnWinDiff" type="button">🎚️ 난이도 선택</button>
+      <button class="btn btn-secondary" id="btnWinShare" type="button">📋 공유하기</button>
     </div>
     <button class="btn-portal" type="button">🎮 다른 게임하기</button>
   </div>
@@ -1283,8 +1288,12 @@ const btnCloseDiff = document.getElementById('btnCloseDiff');
 const btnCancelDiff = document.getElementById('btnCancelDiff');
 const btnGoRetry = document.getElementById('btnGoRetry');
 const btnGoDiff = document.getElementById('btnGoDiff');
+const btnGoShare = document.getElementById('btnGoShare');
+const btnGoPlay = document.getElementById('btnGoPlay');
 const btnWinRetry = document.getElementById('btnWinRetry');
 const btnWinDiff = document.getElementById('btnWinDiff');
+const btnWinShare = document.getElementById('btnWinShare');
+const btnWinPlay = document.getElementById('btnWinPlay');
 const btnCloseRules = document.getElementById('btnCloseRules');
 const btnCloseRulesBottom = document.getElementById('btnCloseRulesBottom');
 const portalBtns = document.querySelectorAll('.btn-portal');
@@ -1325,6 +1334,9 @@ let mouseTarget = null;
 
 let bullets = [];
 let toastTimeout = null;
+
+// 공유용 결과 데이터 캐시 (공유 버튼 누를 때 URL 생성에 사용)
+let currentShareData = null;
 
 // ═══════════════════════════════════════════
 // RECORDS (localStorage)
@@ -2312,6 +2324,8 @@ function finish(winFlag) {
   const secs = Math.floor(elapsed);
   const sc = secs * 10;
   const bestTime = loadRecords()[difficulty].bestTime;
+  // 공유용 데이터 캐시 (공유 버튼 누를 때 URL 생성에 사용)
+  currentShareData = { v: 1, g: 'bulletdodge', d: difficulty, t: secs, w: winFlag ? 1 : 0 };
 
   setTimeout(function() {
     if (winFlag) {
@@ -2320,6 +2334,10 @@ function finish(winFlag) {
       winScore.textContent = formatNumber(sc) + '점';
       winBest.textContent = bestTime > 0 ? formatTime(bestTime) : '--';
       winNewRecord.hidden = !isNewBest;
+      // 내가 플레이한 클리어: 시작하기는 불필요 → 공유/다시하기 표시
+      btnWinShare.hidden = false;
+      btnWinRetry.hidden = false;
+      btnWinPlay.hidden = true;
       modalWin.classList.add('show');
     } else {
       goMessage.textContent = '(' + DIFFICULTY_CONFIG[difficulty].label + ') 총알에 맞아 목숨이 모두 떨어졌어요';
@@ -2327,9 +2345,117 @@ function finish(winFlag) {
       goScore.textContent = formatNumber(sc) + '점';
       goBest.textContent = bestTime > 0 ? formatTime(bestTime) : '--';
       goNewRecord.hidden = !isNewBest;
+      // 내가 플레이한 게임오버: 시작하기는 불필요 → 공유/다시하기 표시
+      btnGoShare.hidden = false;
+      btnGoRetry.hidden = false;
+      btnGoPlay.hidden = true;
       modalGameOver.classList.add('show');
     }
   }, 350);
+}
+
+/* ═══════════════════════════════════════
+   RESULT SHARE — URL(hash)로 결과 공유
+   로컬 테스트를 위해 origin(도메인)은 하드코딩하지 않고
+   현재 페이지의 location을 그대로 사용한다.
+   ═══════════════════════════════════════ */
+// Base64 인코딩 (URL-safe: + / = 제거)
+function encodeShareData(data) {
+  return btoa(unescape(encodeURIComponent(JSON.stringify(data))))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+// Base64 디코딩 (+ 검증). 실패 시 null.
+function decodeShareData(encoded) {
+  try {
+    var b64 = encoded.replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    var json = decodeURIComponent(escape(atob(b64)));
+    var data = JSON.parse(json);
+    if (!data || typeof data !== 'object' || data.v !== 1 || data.g !== 'bulletdodge') return null;
+    if (typeof data.d !== 'string' || !DIFFICULTY_CONFIG[data.d]) return null;
+    if (typeof data.w !== 'number') return null;
+    return {
+      d: data.d,
+      t: typeof data.t === 'number' ? Math.max(0, Math.floor(data.t)) : 0,
+      w: data.w ? 1 : 0
+    };
+  } catch (e) { return null; }
+}
+// 현재 페이지 기반 공유 URL 생성 (로컬: localhost, 배포: 실제 도메인 자동 반영)
+function buildShareUrl() {
+  if (!currentShareData) return null;
+  var shareOrigin = location.protocol === 'file:' ? location.href.split('#')[0] : location.origin + location.pathname;
+  return shareOrigin + '#' + encodeShareData(currentShareData);
+}
+// 공유 결과 화면 표시 — 게임을 로드하지 않고 결과 모달만 띄운다.
+// 시작 화면(깔끔한 배경) 위에 바로 모달을 띄워 캔버스가 안 그려진 상태를 피한다.
+function showSharedResult(data) {
+  phase = data.w ? 'won' : 'over';
+  currentShareData = { v: 1, g: 'bulletdodge', d: data.d, t: data.t, w: data.w };
+  const secs = data.t;
+  const sc = secs * 10;
+  if (data.w) {
+    winMessage.textContent = DIFFICULTY_CONFIG[data.d].label + ' 난이도를 클리어했어요!';
+    winTime.textContent = formatTime(secs);
+    winScore.textContent = formatNumber(sc) + '점';
+    winBest.textContent = '--';
+    winNewRecord.hidden = true;
+    // 공유받은 화면: 공유/다시하기는 불필요 → "시작하기"로 대체
+    btnWinShare.hidden = true;
+    btnWinRetry.hidden = true;
+    btnWinPlay.hidden = false;
+    modalWin.classList.add('show');
+  } else {
+    goMessage.textContent = '(' + DIFFICULTY_CONFIG[data.d].label + ') 공유받은 결과예요.';
+    goTime.textContent = formatTime(secs);
+    goScore.textContent = formatNumber(sc) + '점';
+    goBest.textContent = '--';
+    goNewRecord.hidden = true;
+    // 공유받은 화면: 공유/다시하기는 불필요 → "시작하기"로 대체
+    btnGoShare.hidden = true;
+    btnGoRetry.hidden = true;
+    btnGoPlay.hidden = false;
+    modalGameOver.classList.add('show');
+  }
+}
+function clearShareHash() {
+  if (location.hash) {
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+  }
+}
+
+// 공유 버튼: URL 생성 → 클립보드 복사 → 피드백
+function shareResult() {
+  var url = buildShareUrl();
+  if (!url) return;
+  var msgEl = modalWin.classList.contains('show') ? winMessage : goMessage;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(function() {
+      msgEl.textContent = '🔗 링크가 복사됐어요! 메시지에 붙여넣어 공유하세요.';
+    }).catch(function() {
+      fallbackCopyShare(url);
+    });
+  } else {
+    fallbackCopyShare(url);
+  }
+}
+// 클립보드 API 미지원/실패 시 폴백 (선택 텍스트 복사)
+function fallbackCopyShare(url) {
+  var msgEl = modalWin.classList.contains('show') ? winMessage : goMessage;
+  try {
+    var ta = document.createElement('textarea');
+    ta.value = url;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    msgEl.textContent = '🔗 링크가 복사됐어요! 메시지에 붙여넣어 공유하세요.';
+  } catch (e) {
+    // 마지막 폴백: URL을 직접 표시
+    msgEl.innerHTML = '🔗 아래 링크를 길게 눌러 복사하세요:<br><small style="word-break:break-all;user-select:all">' + url + '</small>';
+  }
 }
 
 // ═══════════════════════════════════════════
@@ -2567,6 +2693,17 @@ function bindEvents() {
     addRipple(this, e);
     openDiffModal();
   });
+  btnGoShare.addEventListener('click', function(e) {
+    addRipple(this, e);
+    shareResult();
+  });
+  // 공유받은 결과 → "시작하기": hash 정리 후 공유된 난이도로 새 게임 시작
+  btnGoPlay.addEventListener('click', function(e) {
+    addRipple(this, e);
+    closeAllModals();
+    clearShareHash();
+    startGame(currentShareData ? currentShareData.d : difficulty);
+  });
 
   // Win modal
   btnWinRetry.addEventListener('click', function(e) {
@@ -2577,6 +2714,17 @@ function bindEvents() {
   btnWinDiff.addEventListener('click', function(e) {
     addRipple(this, e);
     openDiffModal();
+  });
+  btnWinShare.addEventListener('click', function(e) {
+    addRipple(this, e);
+    shareResult();
+  });
+  // 공유받은 결과 → "시작하기": hash 정리 후 공유된 난이도로 새 게임 시작
+  btnWinPlay.addEventListener('click', function(e) {
+    addRipple(this, e);
+    closeAllModals();
+    clearShareHash();
+    startGame(currentShareData ? currentShareData.d : difficulty);
   });
 
   // Rules modal — ✕ 닫기
@@ -2766,6 +2914,18 @@ function init() {
 }
 
 init();
+
+// 공유 URL(hash)로 접속한 경우 → 게임을 로드하지 않고 결과 화면만 표시
+(function() {
+  if (!location.hash || location.hash.length < 2) return;
+  var data = decodeShareData(location.hash.slice(1));
+  if (data) {
+    showSharedResult(data);
+  } else {
+    // 유효하지 않은 hash → 주소창에서 제거
+    clearShareHash();
+  }
+})();
 
 })();
 </script>
